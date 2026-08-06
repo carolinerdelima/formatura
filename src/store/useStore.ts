@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { uid } from '../lib/format';
 import { localStorageAdapter, normalize, type StorageAdapter } from './persistence';
+import { fetchRemoteState, scheduleRemoteSave } from './remoteSync';
 import { seed } from './seed';
 import type {
   AppState,
@@ -92,7 +93,7 @@ interface Actions {
 
 export type Store = AppState & Actions;
 
-/** Aplica o patch, persiste e devolve o próximo estado. */
+/** Aplica o patch, persiste (local + remoto) e devolve o próximo estado. */
 function persistFrom(state: Store, patch: Partial<AppState>): Partial<AppState> {
   const next: AppState = {
     festa: state.festa,
@@ -107,6 +108,7 @@ function persistFrom(state: Store, patch: Partial<AppState>): Partial<AppState> 
     ...patch,
   };
   storage.save(next);
+  scheduleRemoteSave(next);
   return patch;
 }
 
@@ -253,3 +255,12 @@ export const useStore = create<Store>()((set) => {
 
 /** `true` enquanto o localStorage estiver disponível. */
 export const isPersistent = () => storage.isPersistent();
+
+/** Busca o estado mais recente do Supabase (se configurado) e substitui o
+ *  estado local por ele — é o que faz o celular "puxar" o que foi editado
+ *  no PC (e vice-versa). Chamar uma vez, no bootstrap do app. */
+export function initRemoteSync(): void {
+  void fetchRemoteState().then((remote) => {
+    if (remote) useStore.getState().replaceState(remote);
+  });
+}
