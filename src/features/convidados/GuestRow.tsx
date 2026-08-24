@@ -1,5 +1,6 @@
 import { IconButton, PillToggle } from '../../components/ui';
 import { toast } from '../../components/toastStore';
+import { usePendingConvidadosStore } from '../../store/pendingConvidadosStore';
 import type { Convidado, Faixa, Genero, StatusConvidado } from '../../types';
 
 interface GuestRowProps {
@@ -26,6 +27,7 @@ export function GuestRow({
   const faixaClass =
     g.faixa === 'crianca' ? 'is-crianca' : g.faixa === 'adolescente' ? 'is-adol' : '';
   const vem = g.provavel !== false;
+  const salvando = usePendingConvidadosStore((s) => s.pending.has(g.id));
 
   return (
     <div className="guest-card">
@@ -115,7 +117,12 @@ export function GuestRow({
         title="Convite enviado?"
         onClick={() => onToggleConvite(g.id)}
       />
-      {comLinkRsvp && g.slug ? (
+      {comLinkRsvp && salvando ? (
+        <span className="chip" title="Gravando no banco antes de liberar o link…">
+          Salvando…
+        </span>
+      ) : null}
+      {comLinkRsvp && !salvando && g.slug ? (
         <IconButton
           title="Copiar link do convite"
           onClick={() => {

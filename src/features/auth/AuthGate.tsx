@@ -10,13 +10,19 @@ import { useSession } from './useSession';
  */
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { session } = useSession();
+  // O Supabase dispara `onAuthStateChange` (com um novo objeto de sessão) a
+  // cada renovação silenciosa de token, não só no login/logout. Depender do
+  // `session` inteiro reiniciava o bootstrap (refetch + re-assinatura) a cada
+  // renovação, o que podia sobrescrever uma edição local que ainda não tinha
+  // terminado de gravar no Supabase. `user.id` só muda em login/logout de verdade.
+  const userId = session?.user.id;
 
   useEffect(() => {
-    if (!session) return;
+    if (!userId) return;
     initRemoteSync();
     initConvidadosSync();
     return () => stopConvidadosSync();
-  }, [session]);
+  }, [userId]);
 
   // `undefined` = ainda checando a sessão salva; evita um flash pra tela de login
   if (session === undefined) return null;

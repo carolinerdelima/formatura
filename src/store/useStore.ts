@@ -8,6 +8,7 @@ import {
   subscribeConvidados,
   upsertConvidados,
 } from './convidadosSync';
+import { usePendingConvidadosStore } from './pendingConvidadosStore';
 import { localStorageAdapter, normalize, type StorageAdapter } from './persistence';
 import { fetchRemoteState, scheduleRemoteSave } from './remoteSync';
 import { seed } from './seed';
@@ -209,7 +210,19 @@ export const useStore = create<Store>()((set) => {
     addConvidado: (nome, grupo) =>
       update((s) => {
         const g = novoConvidado(nome, grupo);
-        void insertConvidado(g);
+        usePendingConvidadosStore.getState().marcar(g.id);
+        void insertConvidado(g).then((ok) => {
+          usePendingConvidadosStore.getState().desmarcar(g.id);
+          if (!ok) {
+            // não salvou: o slug local é mentiroso (o link não existe de verdade) —
+            // some com ele localmente sem tentar um UPDATE numa linha que não existe.
+            set((st) => ({
+              convidados: st.convidados.map((x) =>
+                x.id === g.id ? { ...x, slug: undefined } : x,
+              ),
+            }));
+          }
+        });
         return { convidados: [...s.convidados, g] };
       }),
     editConvidado: (id, campo, valor) =>

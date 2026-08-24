@@ -1,3 +1,4 @@
+import { toast } from '../components/toastStore';
 import { supabase } from '../lib/supabase';
 import type { Convidado } from '../types';
 
@@ -58,14 +59,18 @@ export async function fetchConvidados(): Promise<Convidado[] | null> {
   const { data, error } = await supabase.from(TABLE).select('*').order('nome');
   if (error) {
     console.error('Falha ao buscar convidados do Supabase:', error.message);
+    toast('Não conseguiu carregar os convidados do banco agora.');
     return null;
   }
   return (data as ConvidadoRow[]).map(fromRow);
 }
 
-/** Insere um convidado novo (id e slug já gerados no cliente). */
-export async function insertConvidado(g: Convidado): Promise<void> {
-  if (!supabase) return;
+/**
+ * Insere um convidado novo (id e slug já gerados no cliente).
+ * @returns `true` se a gravação foi confirmada — só aí o link dele é real.
+ */
+export async function insertConvidado(g: Convidado): Promise<boolean> {
+  if (!supabase) return false;
   const { error } = await supabase.from(TABLE).insert({
     id: g.id,
     nome: g.nome,
@@ -80,7 +85,12 @@ export async function insertConvidado(g: Convidado): Promise<void> {
     obs: g.obs,
     slug: g.slug,
   });
-  if (error) console.error('Falha ao criar convidado no Supabase:', error.message);
+  if (error) {
+    console.error('Falha ao criar convidado no Supabase:', error.message);
+    toast(`Não salvou "${g.nome}" no banco — o link dele não vai funcionar. Tenta de novo.`);
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -106,21 +116,30 @@ export async function upsertConvidados(list: Convidado[]): Promise<void> {
     slug: g.slug || Math.random().toString(36).slice(2, 12),
   }));
   const { error } = await supabase.from(TABLE).upsert(rows);
-  if (error) console.error('Falha ao restaurar convidados no Supabase:', error.message);
+  if (error) {
+    console.error('Falha ao restaurar convidados no Supabase:', error.message);
+    toast('Falha ao gravar os convidados restaurados no banco — veja o console.');
+  }
 }
 
 /** Atualiza só os campos informados de um convidado. */
 export async function updateConvidado(id: string, patch: Partial<Convidado>): Promise<void> {
   if (!supabase) return;
   const { error } = await supabase.from(TABLE).update(toRowPatch(patch)).eq('id', id);
-  if (error) console.error('Falha ao atualizar convidado no Supabase:', error.message);
+  if (error) {
+    console.error('Falha ao atualizar convidado no Supabase:', error.message);
+    toast('Não salvou essa edição no banco — tenta de novo.');
+  }
 }
 
 /** Remove um convidado. */
 export async function deleteConvidado(id: string): Promise<void> {
   if (!supabase) return;
   const { error } = await supabase.from(TABLE).delete().eq('id', id);
-  if (error) console.error('Falha ao remover convidado no Supabase:', error.message);
+  if (error) {
+    console.error('Falha ao remover convidado no Supabase:', error.message);
+    toast('Não conseguiu remover no banco — tenta de novo.');
+  }
 }
 
 const pendingPatches = new Map<string, Partial<Convidado>>();
