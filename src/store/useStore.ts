@@ -6,6 +6,7 @@ import {
   insertConvidado,
   scheduleConvidadoUpdate,
   subscribeConvidados,
+  upsertConvidados,
 } from './convidadosSync';
 import { localStorageAdapter, normalize, type StorageAdapter } from './persistence';
 import { fetchRemoteState, scheduleRemoteSave } from './remoteSync';
@@ -101,6 +102,9 @@ interface Actions {
   // backup
   replaceState: (raw: unknown) => void;
   reset: () => void;
+  /** Aplica um blob vindo do Supabase SEM tocar em `convidados` (fonte própria)
+   *  e SEM reagendar um envio de volta — só usado pelo pull inicial. */
+  applyRemoteBlob: (patch: Omit<AppState, 'convidados'>) => void;
 }
 
 export type Store = AppState & Actions;
@@ -281,20 +285,36 @@ export const useStore = create<Store>()((set) => {
         convidadosColacao: s.convidadosColacao.filter((g) => g.id !== id),
       })),
 
-    replaceState: (raw) => update(() => normalize(raw)),
+    replaceState: (raw) => {
+      const restored = normalize(raw);
+      update(() => restored);
+      // um backup restaurado com convidados precisa "grudar" na tabela remota,
+      // senão o próximo fetch/realtime sobrescreve com o que já estava lá.
+      if (restored.convidados.length) void upsertConvidados(restored.convidados);
+    },
     reset: () => update(() => seed()),
+    applyRemoteBlob: (patch) =>
+      set((s) => {
+        // `convidados` nunca vem do blob — a fonte é a tabela própria, sincronizada
+        // à parte. Preservar o valor atual evita que o pull do blob zere a lista
+        // (e, crucialmente, NÃO chama scheduleRemoteSave: um pull não deve virar push).
+        const next: AppState = { ...patch, convidados: s.convidados };
+        storage.save(next);
+        return next;
+      }),
   };
 });
 
 /** `true` enquanto o localStorage estiver disponível. */
 export const isPersistent = () => storage.isPersistent();
 
-/** Busca o estado mais recente do Supabase (se configurado) e substitui o
- *  estado local por ele — é o que faz o celular "puxar" o que foi editado
- *  no PC (e vice-versa). Chamar uma vez, no bootstrap do app. */
+/** Busca o estado mais recente do Supabase (se configurado) e aplica ao
+ *  estado local — é o que faz o celular "puxar" o que foi editado no PC
+ *  (e vice-versa). Chamar uma vez, no bootstrap do app. Não mexe em
+ *  `convidados`: essa lista sincroniza separado, via `initConvidadosSync`. */
 export function initRemoteSync(): void {
   void fetchRemoteState().then((remote) => {
-    if (remote) useStore.getState().replaceState(remote);
+    if (remote) useStore.getState().applyRemoteBlob(remote);
   });
 }
 

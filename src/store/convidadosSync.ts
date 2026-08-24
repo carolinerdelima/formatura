@@ -83,6 +83,32 @@ export async function insertConvidado(g: Convidado): Promise<void> {
   if (error) console.error('Falha ao criar convidado no Supabase:', error.message);
 }
 
+/**
+ * Insere ou atualiza vários convidados de uma vez (por `id`) — usado ao
+ * restaurar um backup `.json`, pra garantir que a tabela remota fica igual
+ * ao que acabou de ser restaurado localmente, e não o contrário.
+ */
+export async function upsertConvidados(list: Convidado[]): Promise<void> {
+  if (!supabase || list.length === 0) return;
+  const rows = list.map((g) => ({
+    id: g.id,
+    nome: g.nome,
+    grupo: g.grupo,
+    faixa: g.faixa,
+    idade: g.idade,
+    genero: g.genero,
+    bebe: g.bebe,
+    status: g.status,
+    provavel: g.provavel,
+    convite_enviado: g.conviteEnviado,
+    obs: g.obs,
+    // se o convidado restaurado não tinha slug (backup de versão antiga), gera um novo
+    slug: g.slug || Math.random().toString(36).slice(2, 12),
+  }));
+  const { error } = await supabase.from(TABLE).upsert(rows);
+  if (error) console.error('Falha ao restaurar convidados no Supabase:', error.message);
+}
+
 /** Atualiza só os campos informados de um convidado. */
 export async function updateConvidado(id: string, patch: Partial<Convidado>): Promise<void> {
   if (!supabase) return;
