@@ -16,13 +16,13 @@
 export const PREFERENCIAS_BASICAS: string[] = [
   'Acessórios / bijuterias / joias no dourado',
   'Calçado tamanho 37',
-  'Roupas — tamanho P ou M',
-  'Perfumes, body splashs, cremes docinhos ou florais',
+  'Roupas ->  tamanho P ou M. Calça tamanho 38/40',
+  'Perfumes, body splashs, cremes com cheiro docinho ou florais',
   'Qualquer tipo de cosmético',
   'Acessórios pra computador (mouse, mousepad, teclado) rosas',
-  'Cores que ela gosta: rosa, bege, branco, preto, marrom, azul',
-  'Coisas do time dela (Grêmio) 🔵⚫⚪',
-  'Ela é apaixonada por café ☕',
+  'Cores que eu gosto: rosa, bege, branco, preto, marrom, azul',
+  'Coisas do (Grêmio) 🔵⚫⚪',
+  'Cafézinhos ☕',
   'Docinhos em geral 🍬',
   'Itens fitness (roupa de treino, acessórios de treino, etc.)',
 ];
