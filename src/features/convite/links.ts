@@ -21,10 +21,10 @@ export function linkSalvarNaAgenda(): string {
   const fim = new Date(inicio.getTime() + CONVITE_INFO.duracaoHoras * 60 * 60 * 1000);
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: 'Formatura da Carol — Ciência da Computação',
+    text: CONVITE_INFO.nomeEvento,
     dates: `${formatoGCal(inicio)}/${formatoGCal(fim)}`,
     location: `${CONVITE_INFO.local}, ${CONVITE_INFO.endereco}`,
-    details: 'Golden Hour at the Farm 🌾✨',
+    details: CONVITE_INFO.descricaoCalendario,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }

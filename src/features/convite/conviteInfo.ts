@@ -4,18 +4,17 @@
  * vir do banco — se a data, o local ou a chave PIX mudarem, edite aqui.
  */
 export const CONVITE_INFO = {
+  nomeEvento: 'Formatura da Carol',
   local: 'Churrascaria Família Strapazzon',
   endereco: 'Rua VRS, 855 — São Marcos, Farroupilha/RS · 95180-000',
   /** Mesmo formato do resto do app: `YYYY-MM-DDTHH:mm`. */
-  dataHora: '2026-08-29T18:00',
+  dataHora: '2026-09-05T19:00',
   duracaoHoras: 5,
+  descricaoCalendario: 'Jantar e comemoração da formatura da Carol em Ciência da Computação ✨',
   pix: {
-    tipo: 'Chave PIX',
-    chave: '',
+    tipo: 'Celular',
+    chave: '51996642772',
+    /** Arquivo em `public/` — servido direto da raiz do site. */
+    qrImagem: '/pix-qr.jpeg',
   },
-  sugestoesPresente: [
-    'Contribuição via PIX (chave ao lado)',
-    'Vale-presente em loja de sua preferência',
-    'Ajuda com a lua de formatura',
-  ],
 };

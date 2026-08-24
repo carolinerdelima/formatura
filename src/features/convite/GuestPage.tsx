@@ -5,6 +5,12 @@ import { Toast } from '../../components/Toast';
 import { dataPorExtenso, horaCurta } from '../../lib/format';
 import type { Faixa, Genero } from '../../types';
 import { CONVITE_INFO } from './conviteInfo';
+import {
+  CATEGORIAS_PRESENTE,
+  PREFERENCIAS_BASICAS,
+  SUGESTOES_PRESENTE,
+  type CategoriaPresente,
+} from './giftSuggestions';
 import { linkComoChegar, linkSalvarNaAgenda } from './links';
 import { buscarConvite, enviarRsvp, type ConviteData } from './rsvp';
 
@@ -55,28 +61,45 @@ export function GuestPage() {
   if (fase === 'obrigado' && convite) {
     return (
       <CentroPagina>
-        <div className="card" style={{ maxWidth: 420, textAlign: 'center' }}>
-          <div style={{ fontSize: 32 }}>{respostaFinal === 'confirmado' ? '🎉' : '💌'}</div>
-          <h2 style={{ marginTop: 10 }}>
-            {respostaFinal === 'confirmado' ? 'Presença confirmada!' : 'Resposta registrada'}
-          </h2>
-          <p style={{ color: 'var(--ink-soft)', marginTop: 8 }}>
-            {respostaFinal === 'confirmado'
-              ? `Que alegria, ${convite.nome}! Nos vemos na golden hour. 🌾✨`
-              : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta!`}
-          </p>
-          {respostaFinal === 'confirmado' ? <PresentesEPix /> : null}
+        <div style={{ maxWidth: 420, width: '100%' }}>
+          <div className="card" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 32 }}>{respostaFinal === 'confirmado' ? '🎉' : '💌'}</div>
+            <h2 style={{ marginTop: 10 }}>
+              {respostaFinal === 'confirmado' ? 'Presença confirmada!' : 'Resposta registrada'}
+            </h2>
+            <p style={{ color: 'var(--ink-soft)', marginTop: 8 }}>
+              {respostaFinal === 'confirmado'
+                ? `Que alegria, ${convite.nome}! Nos vemos lá. 🌾✨`
+                : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta!`}
+            </p>
+          </div>
+          {respostaFinal === 'confirmado' ? <SecaoPresente /> : null}
         </div>
       </CentroPagina>
     );
   }
 
-  return convite ? <FormularioConvite slug={slug} convite={convite} onEnviado={setRespostaFinal} onFaseObrigado={() => setFase('obrigado')} /> : null;
+  return convite ? (
+    <FormularioConvite
+      slug={slug}
+      convite={convite}
+      onEnviado={setRespostaFinal}
+      onFaseObrigado={() => setFase('obrigado')}
+    />
+  ) : null;
 }
 
 function CentroPagina({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+      }}
+    >
       {children}
       <Toast />
     </div>
@@ -103,7 +126,12 @@ function FormularioConvite({
 
   const responder = async (status: 'confirmado' | 'recusado') => {
     setEnviando(status);
-    const ok = await enviarRsvp(slug, status, precisaFaixaGenero ? faixa : undefined, precisaFaixaGenero ? genero : undefined);
+    const ok = await enviarRsvp(
+      slug,
+      status,
+      precisaFaixaGenero ? faixa : undefined,
+      precisaFaixaGenero ? genero : undefined,
+    );
     setEnviando(null);
     if (ok) {
       onEnviado(status);
@@ -117,7 +145,7 @@ function FormularioConvite({
     <div style={{ maxWidth: 480, margin: '32px auto', padding: '0 16px' }}>
       <div className="hero">
         <div className="sundial" />
-        <div className="kicker">Golden Hour at the Farm</div>
+        <div className="kicker">{CONVITE_INFO.nomeEvento}</div>
         <h2>
           Olá, <em>{convite.nome || 'convidado'}</em>!
         </h2>
@@ -130,11 +158,18 @@ function FormularioConvite({
           <a className="btn soft" href={linkComoChegar()} target="_blank" rel="noopener noreferrer">
             📍 Como chegar
           </a>
-          <a className="btn soft" href={linkSalvarNaAgenda()} target="_blank" rel="noopener noreferrer">
+          <a
+            className="btn soft"
+            href={linkSalvarNaAgenda()}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             🗓️ Salvar na agenda
           </a>
         </div>
       </div>
+
+      <SecaoPresente />
 
       {jaRespondeu && !mudarResposta ? (
         <div className="card" style={{ marginTop: 18, textAlign: 'center' }}>
@@ -150,7 +185,6 @@ function FormularioConvite({
           >
             Mudar resposta
           </button>
-          {convite.status === 'confirmado' ? <PresentesEPix /> : null}
         </div>
       ) : (
         <div className="card" style={{ marginTop: 18 }}>
@@ -200,31 +234,93 @@ function FormularioConvite({
   );
 }
 
-function PresentesEPix() {
-  const { pix, sugestoesPresente } = CONVITE_INFO;
+/** Bloco entre a descrição do evento e a confirmação: sugestões de presente / chave PIX,
+ *  cada um revelado só ao clicar — não empurra a tela de confirmação pra baixo à toa. */
+function SecaoPresente() {
+  const { pix } = CONVITE_INFO;
+  const [verSugestoes, setVerSugestoes] = useState(false);
+  const [verPix, setVerPix] = useState(false);
+
+  const categorias = Object.keys(CATEGORIAS_PRESENTE) as CategoriaPresente[];
+
   return (
-    <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <h4 style={{ fontSize: 15 }}>🎁 Ideias de presente</h4>
-      <ul style={{ fontSize: 13.5, color: 'var(--ink-soft)', paddingLeft: 18 }}>
-        {sugestoesPresente.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
-      {pix.chave ? (
-        <div className="chiprow">
-          <span className="chip">
-            {pix.tipo}: <b>{pix.chave}</b>
-          </span>
-          <button
-            type="button"
-            className="btn sm soft"
-            onClick={() => {
-              void navigator.clipboard.writeText(pix.chave);
-              toast('Chave PIX copiada!');
-            }}
-          >
-            Copiar chave
-          </button>
+    <div className="card" style={{ marginTop: 18 }}>
+      <p style={{ margin: 0 }}>🎁 Deseja dar algum presente?</p>
+      <div className="row" style={{ marginTop: 10 }}>
+        <button type="button" className="btn ghost sm" onClick={() => setVerSugestoes((v) => !v)}>
+          {verSugestoes ? 'Ocultar sugestões' : 'Clique aqui pra ver sugestões'}
+        </button>
+        <button type="button" className="btn ghost sm" onClick={() => setVerPix((v) => !v)}>
+          {verPix ? 'Ocultar chave PIX' : 'Clique aqui para ver a chave PIX'}
+        </button>
+      </div>
+
+      {verSugestoes ? (
+        <div style={{ marginTop: 14 }}>
+          <ul style={{ fontSize: 13.5, color: 'var(--ink-soft)', paddingLeft: 18, margin: 0 }}>
+            {PREFERENCIAS_BASICAS.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+
+          {SUGESTOES_PRESENTE.length ? (
+            <div style={{ marginTop: 18 }}>
+              <h4 style={{ fontSize: 14, margin: '0 0 4px' }}>💭 Exemplos do gosto da Carol</h4>
+              <p style={{ fontSize: 12, color: 'var(--ink-soft)', margin: '0 0 10px' }}>
+                São só referências pra pegar a ideia — não precisa ser exatamente isso.
+              </p>
+              {categorias.map((cat) => {
+                const itens = SUGESTOES_PRESENTE.filter((s) => s.categoria === cat);
+                if (!itens.length) return null;
+                return (
+                  <div key={cat} style={{ marginBottom: 14 }}>
+                    <h5 style={{ fontSize: 13, margin: '0 0 8px' }}>{CATEGORIAS_PRESENTE[cat]}</h5>
+                    <div className="gift-grid">
+                      {itens.map((item) => (
+                        <figure className="gift-item" key={item.nome}>
+                          <img src={`/presentes/${item.imagem}`} alt={item.nome} loading="lazy" />
+                          <figcaption>{item.nome}</figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {verPix ? (
+        <div style={{ marginTop: 12, textAlign: 'center' }}>
+          {pix.qrImagem ? (
+            <img
+              src={pix.qrImagem}
+              alt="QR code do PIX"
+              style={{ maxWidth: 200, borderRadius: 10, marginBottom: 10 }}
+            />
+          ) : null}
+          {pix.chave ? (
+            <div className="chiprow" style={{ justifyContent: 'center' }}>
+              <span className="chip">
+                {pix.tipo}: <b>{pix.chave}</b>
+              </span>
+              <button
+                type="button"
+                className="btn sm soft"
+                onClick={() => {
+                  void navigator.clipboard.writeText(pix.chave);
+                  toast('Chave PIX copiada!');
+                }}
+              >
+                Copiar chave
+              </button>
+            </div>
+          ) : (
+            <p className="empty" style={{ textAlign: 'left' }}>
+              Chave PIX ainda não cadastrada.
+            </p>
+          )}
         </div>
       ) : null}
     </div>
