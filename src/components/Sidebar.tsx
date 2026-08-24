@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { sair } from '../features/auth/authActions';
 import { TABS } from '../lib/catalogo';
 import { isPersistent, useStore } from '../store/useStore';
 import type { AppState } from '../types';
@@ -115,6 +116,9 @@ export function Sidebar() {
             e.target.value = '';
           }}
         />
+        <button type="button" onClick={() => void sair()}>
+          🚪 Sair
+        </button>
       </div>
     </aside>
   );

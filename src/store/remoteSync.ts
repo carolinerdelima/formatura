@@ -13,7 +13,8 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 /**
  * Busca o estado salvo no Supabase.
  * @returns O estado normalizado, ou `null` se o Supabase não estiver
- * configurado, a linha ainda não existir, ou a requisição falhar.
+ * configurado, sem sessão autenticada (RLS bloqueia), a linha ainda não
+ * existir, ou a requisição falhar.
  */
 export async function fetchRemoteState(): Promise<AppState | null> {
     if (!supabase) return null;
@@ -47,9 +48,22 @@ export async function fetchRemoteState(): Promise<AppState | null> {
 async function pushRemoteState(state: AppState): Promise<void> {
     if (!supabase) return;
 
+    // `convidados` (festa) agora vive na tabela própria `convidados`, com RLS
+    // por linha e RPCs públicas — não duplica mais dentro do blob JSON.
+    const dataSemConvidados: Omit<AppState, 'convidados'> = {
+        festa: state.festa,
+        bebida: state.bebida,
+        pix: state.pix,
+        checklists: state.checklists,
+        inspiracoes: state.inspiracoes,
+        compras: state.compras,
+        convidadosColacao: state.convidadosColacao,
+        tab: state.tab,
+    };
+
     const { error } = await supabase
         .from(TABLE)
-        .upsert({ id: ROW_ID, data: state, updated_at: new Date().toISOString() });
+        .upsert({ id: ROW_ID, data: dataSemConvidados, updated_at: new Date().toISOString() });
 
     if (error) {
         console.error('Falha ao salvar estado no Supabase:', error.message);

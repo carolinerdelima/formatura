@@ -1,4 +1,5 @@
 import { IconButton, PillToggle } from '../../components/ui';
+import { toast } from '../../components/toastStore';
 import type { Convidado, Faixa, Genero, StatusConvidado } from '../../types';
 
 interface GuestRowProps {
@@ -8,6 +9,8 @@ interface GuestRowProps {
   onToggleBebe: (id: string) => void;
   onToggleProvavel: (id: string) => void;
   onRemove: (id: string) => void;
+  /** Mostra o botão "Copiar link" (RSVP) — só a lista da festa tem link público. */
+  comLinkRsvp?: boolean;
 }
 
 /** Linha de convidado editável — compartilhada entre a festa e a colação. */
@@ -18,6 +21,7 @@ export function GuestRow({
   onToggleBebe,
   onToggleProvavel,
   onRemove,
+  comLinkRsvp = false,
 }: GuestRowProps) {
   const faixaClass =
     g.faixa === 'crianca' ? 'is-crianca' : g.faixa === 'adolescente' ? 'is-adol' : '';
@@ -111,6 +115,17 @@ export function GuestRow({
         title="Convite enviado?"
         onClick={() => onToggleConvite(g.id)}
       />
+      {comLinkRsvp && g.slug ? (
+        <IconButton
+          title="Copiar link do convite"
+          onClick={() => {
+            void navigator.clipboard.writeText(`${window.location.origin}/c/${g.slug}`);
+            toast('Link copiado!');
+          }}
+        >
+          🔗
+        </IconButton>
+      ) : null}
       <IconButton danger title="Remover convidado" onClick={() => onRemove(g.id)}>
         🗑
       </IconButton>

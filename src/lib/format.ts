@@ -1,6 +1,10 @@
 /** Gera um id curto e único. */
 export const uid = (): string => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
+/** Gera um slug curto (10 chars) para a URL pública `/c/:slug` de um convidado. */
+export const genSlug = (): string =>
+  (Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 10);
+
 /** Formata um número como moeda brasileira. */
 export const brl = (n: number): string =>
   (Number(n) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });

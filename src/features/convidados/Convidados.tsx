@@ -138,6 +138,7 @@ export function Convidados() {
                 onToggleBebe={toggleBebe}
                 onToggleProvavel={toggleProvavel}
                 onRemove={removeConvidado}
+                comLinkRsvp
               />
             ))
           ) : (

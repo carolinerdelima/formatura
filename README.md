@@ -104,6 +104,63 @@ Tudo é salvo automaticamente no `localStorage` a cada alteração (a sidebar pi
 Se o navegador bloquear o localStorage, o app segue funcionando só naquela sessão e
 avisa por um toast — vale fazer backup manual nesse caso.
 
+## Login (admin) + RSVP público (`/c/:slug`)
+
+O app tem duas portas de entrada bem separadas:
+
+- **Área administrativa** (Início, Comida, Convidados, Gastos…) — atrás de login
+  (Supabase Auth, e-mail+senha). Sem sessão, qualquer rota redireciona pra `/login`.
+- **`/c/:slug`** — página pública e pessoal de RSVP, um link por convidado. Sem
+  login, sem cadastro. Mostra só o nome da pessoa, data/local/mapa/agenda,
+  confirmação de presença e, se faltar, os campos de faixa etária/gênero.
+
+### Por que a lista de convidados virou uma tabela própria
+
+Antes, **todo** o estado do app (checklists, orçamento, convidados, tudo) morava
+dentro de um único blob JSON (`formatura_state.data`), sincronizado com a chave
+pública (`anon`) sem restrição — ou seja, qualquer pessoa com essa chave (que já
+fica embutida no JS do site) lia e editava o app inteiro, sem senha.
+
+Pra dar a cada convidado um link que só mexe na própria linha dele, sem enxergar
+os outros nem o orçamento, isso não dava pra fazer com o blob (a unidade de dado
+era "o app inteiro", não "um convidado"). Então:
+
+- Os **convidados da festa** saíram do blob e viraram uma tabela relacional:
+  `convidados` (`id`, `nome`, `grupo`, `faixa`, `idade`, `genero`, `bebe`,
+  `status`, `provavel`, `convite_enviado`, `obs`, **`slug`** — o token da URL
+  pública —, `created_at`, `updated_at`).
+- A tabela `convidados` **e** a `formatura_state` (o blob) ganharam RLS: só a
+  conta autenticada (você) acessa direto. O papel `anon` não tem nenhuma policy
+  em nenhuma das duas.
+- Um convidado nunca toca a tabela. Ele passa por duas funções Postgres
+  (`SECURITY DEFINER`), liberadas só pra `anon`:
+  - `rpc_get_convite(slug)` → devolve nome/status/faixa/genero só daquela linha.
+  - `rpc_confirmar_presenca(slug, status, faixa?, genero?)` → grava só naquela linha.
+- A migração (`supabase/migration_convite_rsvp.sql`) já importa os convidados que
+  hoje estão dentro do blob pra essa tabela nova — **rode uma vez** no SQL Editor
+  do Supabase antes do primeiro deploy dessa versão.
+- **Colação** continua no blob como antes (`convidadosColacao`) — não ganhou link
+  público nesta rodada; se quiser RSVP pra colação também, é o mesmo desenho,
+  só falta replicar tabela + funções.
+- Data/local/PIX que aparecem na página do convidado **não vêm do banco** — ficam
+  fixos em `src/features/convite/conviteInfo.ts` (edite ali se mudar algo; é
+  igual pra todo mundo, não precisa de uma consulta por convidado).
+
+### Colocando a admin pra logar
+
+Não existe cadastro público — crie sua própria conta uma vez, direto no Supabase:
+**Dashboard → Authentication → Users → Add user**, com seu e-mail e uma senha.
+Depois disso, `/login` já funciona.
+
+### Rodando a migração
+
+1. Supabase Dashboard → **SQL Editor** → New query.
+2. Cole o conteúdo de `supabase/migration_convite_rsvp.sql` → **Run**.
+3. Confira em **Table Editor → convidados** se as linhas migraram com um `slug`
+   preenchido em cada uma.
+
+É idempotente — pode rodar de novo sem duplicar dados ou dar erro.
+
 ## Regressões visuais conhecidas do HTML original (já prevenidas aqui)
 
 1. `min-width: 0` explícito em `.main`, `.grid > *`, `.stat`, `.buyrow > *` e

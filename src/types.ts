@@ -58,6 +58,8 @@ export interface Convidado {
   provavel: boolean;
   conviteEnviado: boolean;
   obs: string;
+  /** Token curto e único da URL pública `/c/:slug` — só a festa (não a colação) tem link de RSVP. */
+  slug?: string;
 }
 
 export interface ItemCompra {

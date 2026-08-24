@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { uid } from '../lib/format';
+import { genSlug, uid } from '../lib/format';
+import {
+  deleteConvidado,
+  fetchConvidados,
+  insertConvidado,
+  scheduleConvidadoUpdate,
+  subscribeConvidados,
+} from './convidadosSync';
 import { localStorageAdapter, normalize, type StorageAdapter } from './persistence';
 import { fetchRemoteState, scheduleRemoteSave } from './remoteSync';
 import { seed } from './seed';
@@ -32,6 +39,8 @@ function novoConvidado(nome: string, grupo: string): Convidado {
     provavel: true,
     conviteEnviado: false,
     obs: '',
+    // só a festa tem link de RSVP público; a colação não usa este campo
+    slug: genSlug(),
   };
 }
 
@@ -66,13 +75,16 @@ interface Actions {
   ) => void;
   removeInspiracao: (cat: CategoriaInspiracao, id: string) => void;
 
-  // convidados da festa
+  // convidados da festa — fonte da verdade é a tabela `convidados` no Supabase
+  // (quando configurado); estas actions atualizam local + agendam a gravação remota.
   addConvidado: (nome: string, grupo: string) => void;
   editConvidado: <K extends keyof Convidado>(id: string, campo: K, valor: Convidado[K]) => void;
   toggleConvite: (id: string) => void;
   toggleBebe: (id: string) => void;
   toggleProvavel: (id: string) => void;
   removeConvidado: (id: string) => void;
+  /** Substitui a lista inteira — usado pelo fetch inicial e pelo realtime. */
+  setConvidados: (list: Convidado[]) => void;
 
   // convidados da colação de grau (lista independente)
   addConvidadoColacao: (nome: string, grupo: string) => void;
@@ -191,29 +203,50 @@ export const useStore = create<Store>()((set) => {
       })),
 
     addConvidado: (nome, grupo) =>
-      update((s) => ({ convidados: [...s.convidados, novoConvidado(nome, grupo)] })),
+      update((s) => {
+        const g = novoConvidado(nome, grupo);
+        void insertConvidado(g);
+        return { convidados: [...s.convidados, g] };
+      }),
     editConvidado: (id, campo, valor) =>
-      update((s) => ({
-        convidados: s.convidados.map((g) => (g.id === id ? { ...g, [campo]: valor } : g)),
-      })),
+      update((s) => {
+        scheduleConvidadoUpdate(id, { [campo]: valor } as Partial<Convidado>);
+        return {
+          convidados: s.convidados.map((g) => (g.id === id ? { ...g, [campo]: valor } : g)),
+        };
+      }),
     toggleConvite: (id) =>
-      update((s) => ({
-        convidados: s.convidados.map((g) =>
-          g.id === id ? { ...g, conviteEnviado: !g.conviteEnviado } : g,
-        ),
-      })),
+      update((s) => {
+        const alvo = s.convidados.find((g) => g.id === id);
+        if (alvo) scheduleConvidadoUpdate(id, { conviteEnviado: !alvo.conviteEnviado });
+        return {
+          convidados: s.convidados.map((g) =>
+            g.id === id ? { ...g, conviteEnviado: !g.conviteEnviado } : g,
+          ),
+        };
+      }),
     toggleBebe: (id) =>
-      update((s) => ({
-        convidados: s.convidados.map((g) => (g.id === id ? { ...g, bebe: !g.bebe } : g)),
-      })),
+      update((s) => {
+        const alvo = s.convidados.find((g) => g.id === id);
+        if (alvo) scheduleConvidadoUpdate(id, { bebe: !alvo.bebe });
+        return { convidados: s.convidados.map((g) => (g.id === id ? { ...g, bebe: !g.bebe } : g)) };
+      }),
     toggleProvavel: (id) =>
-      update((s) => ({
-        convidados: s.convidados.map((g) =>
-          g.id === id ? { ...g, provavel: !(g.provavel !== false) } : g,
-        ),
-      })),
+      update((s) => {
+        const alvo = s.convidados.find((g) => g.id === id);
+        if (alvo) scheduleConvidadoUpdate(id, { provavel: !(alvo.provavel !== false) });
+        return {
+          convidados: s.convidados.map((g) =>
+            g.id === id ? { ...g, provavel: !(g.provavel !== false) } : g,
+          ),
+        };
+      }),
     removeConvidado: (id) =>
-      update((s) => ({ convidados: s.convidados.filter((g) => g.id !== id) })),
+      update((s) => {
+        void deleteConvidado(id);
+        return { convidados: s.convidados.filter((g) => g.id !== id) };
+      }),
+    setConvidados: (list) => update(() => ({ convidados: list })),
 
     addConvidadoColacao: (nome, grupo) =>
       update((s) => ({
@@ -263,4 +296,29 @@ export function initRemoteSync(): void {
   void fetchRemoteState().then((remote) => {
     if (remote) useStore.getState().replaceState(remote);
   });
+}
+
+let unsubscribeConvidados: (() => void) | null = null;
+
+/**
+ * Busca a lista de convidados da festa na tabela do Supabase e assina
+ * mudanças em tempo real (inclusive RSVPs feitos pela página pública
+ * `/c/:slug`). Chamar uma vez, só depois de confirmar sessão autenticada —
+ * a tabela tem RLS e não retorna nada para um visitante anônimo.
+ */
+export function initConvidadosSync(): void {
+  const refresh = () => {
+    void fetchConvidados().then((list) => {
+      if (list) useStore.getState().setConvidados(list);
+    });
+  };
+  refresh();
+  unsubscribeConvidados?.();
+  unsubscribeConvidados = subscribeConvidados(refresh);
+}
+
+/** Cancela a assinatura em tempo real — chamar ao encerrar a sessão (logout). */
+export function stopConvidadosSync(): void {
+  unsubscribeConvidados?.();
+  unsubscribeConvidados = null;
 }
