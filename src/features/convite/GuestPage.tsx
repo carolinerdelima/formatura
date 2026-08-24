@@ -69,8 +69,8 @@ export function GuestPage() {
             </h2>
             <p style={{ color: 'var(--ink-soft)', marginTop: 8 }}>
               {respostaFinal === 'confirmado'
-                ? `Que alegria, ${convite.nome}! Nos vemos lá. 🌾✨`
-                : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta!`}
+                ? `Que alegria, ${convite.nome}! Nos vemos lá ✨`
+                : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta :(`}
             </p>
           </div>
           {respostaFinal === 'confirmado' ? <SecaoPresente /> : null}
