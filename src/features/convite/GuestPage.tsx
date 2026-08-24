@@ -169,8 +169,6 @@ function FormularioConvite({
         </div>
       </div>
 
-      <SecaoPresente />
-
       {jaRespondeu && !mudarResposta ? (
         <div className="card" style={{ marginTop: 18, textAlign: 'center' }}>
           <p style={{ margin: 0 }}>
@@ -229,6 +227,9 @@ function FormularioConvite({
           </div>
         </div>
       )}
+
+      <SecaoPresente />
+
       <Toast />
     </div>
   );
