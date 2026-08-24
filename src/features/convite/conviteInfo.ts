@@ -6,7 +6,7 @@
 export const CONVITE_INFO = {
   nomeEvento: 'Formatura da Carol',
   local: 'Churrascaria Família Strapazzon',
-  endereco: 'Rua VRS, 855 — São Marcos, Farroupilha/RS · 95180-000',
+  endereco: 'Rua VRS, 855 - São Marcos, Farroupilha/RS · 95180-000',
   /** Mesmo formato do resto do app: `YYYY-MM-DDTHH:mm`. */
   dataHora: '2026-09-05T19:00',
   duracaoHoras: 5,
