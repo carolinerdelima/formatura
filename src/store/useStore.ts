@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { genSlug, uid } from '../lib/format';
 import {
+  agruparEmFamilia as agruparEmFamiliaSync,
   deleteConvidado,
+  desagruparFamilia as desagruparFamiliaSync,
   fetchConvidados,
   insertConvidado,
   scheduleConvidadoUpdate,
@@ -46,6 +48,11 @@ function novoConvidado(nome: string, grupo: string): Convidado {
   };
 }
 
+/** Uma "família" é a mesma entidade de convidado, mas representando um grupo de N vagas. */
+function novaFamilia(nome: string, vagas: number): Convidado {
+  return { ...novoConvidado(nome, ''), vagas, confirmadosQtd: null };
+}
+
 interface Actions {
   setTab: (tab: TabId) => void;
 
@@ -80,11 +87,17 @@ interface Actions {
   // convidados da festa - fonte da verdade é a tabela `convidados` no Supabase
   // (quando configurado); estas actions atualizam local + agendam a gravação remota.
   addConvidado: (nome: string, grupo: string) => void;
+  /** Cria um link de FAMÍLIA — um grupo de N vagas com um único link. */
+  addFamilia: (nome: string, vagas: number) => void;
   editConvidado: <K extends keyof Convidado>(id: string, campo: K, valor: Convidado[K]) => void;
   toggleConvite: (id: string) => void;
   toggleBebe: (id: string) => void;
   toggleProvavel: (id: string) => void;
   removeConvidado: (id: string) => void;
+  /** Agrupa convidados já cadastrados (por id) sob um link de família compartilhado. */
+  agruparEmFamilia: (ids: string[], nomeGrupo: string) => void;
+  /** Desfaz um grupo — os convidados voltam a ser individuais. */
+  desagruparFamilia: (grupoSlug: string) => void;
   /** Substitui a lista inteira - usado pelo fetch inicial e pelo realtime. */
   setConvidados: (list: Convidado[]) => void;
 
@@ -225,6 +238,22 @@ export const useStore = create<Store>()((set) => {
         });
         return { convidados: [...s.convidados, g] };
       }),
+    addFamilia: (nome, vagas) =>
+      update((s) => {
+        const g = novaFamilia(nome, vagas);
+        usePendingConvidadosStore.getState().marcar(g.id);
+        void insertConvidado(g).then((ok) => {
+          usePendingConvidadosStore.getState().desmarcar(g.id);
+          if (!ok) {
+            set((st) => ({
+              convidados: st.convidados.map((x) =>
+                x.id === g.id ? { ...x, slug: undefined } : x,
+              ),
+            }));
+          }
+        });
+        return { convidados: [...s.convidados, g] };
+      }),
     editConvidado: (id, campo, valor) =>
       update((s) => {
         scheduleConvidadoUpdate(id, { [campo]: valor } as Partial<Convidado>);
@@ -262,6 +291,29 @@ export const useStore = create<Store>()((set) => {
       update((s) => {
         void deleteConvidado(id);
         return { convidados: s.convidados.filter((g) => g.id !== id) };
+      }),
+    agruparEmFamilia: (ids, nomeGrupo) =>
+      update((s) => {
+        const grupoSlug = genSlug();
+        void agruparEmFamiliaSync(ids, grupoSlug, nomeGrupo);
+        return {
+          convidados: s.convidados.map((g) =>
+            ids.includes(g.id)
+              ? { ...g, familiaGrupoSlug: grupoSlug, familiaGrupoNome: nomeGrupo }
+              : g,
+          ),
+        };
+      }),
+    desagruparFamilia: (grupoSlug) =>
+      update((s) => {
+        void desagruparFamiliaSync(grupoSlug);
+        return {
+          convidados: s.convidados.map((g) =>
+            g.familiaGrupoSlug === grupoSlug
+              ? { ...g, familiaGrupoSlug: null, familiaGrupoNome: null }
+              : g,
+          ),
+        };
       }),
     setConvidados: (list) => update(() => ({ convidados: list })),
 

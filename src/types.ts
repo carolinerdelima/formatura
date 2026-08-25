@@ -60,6 +60,24 @@ export interface Convidado {
   obs: string;
   /** Token curto e único da URL pública `/c/:slug` - só a festa (não a colação) tem link de RSVP. */
   slug?: string;
+  /**
+   * Se preenchido, esta linha representa uma FAMÍLIA (grupo de N vagas) em vez
+   * de uma pessoa — `nome` vira o nome da família (ex: "Família Silva"), e os
+   * campos de faixa/gênero/bebe individuais não se aplicam. `null`/`undefined`
+   * = convidado individual normal, sem nenhuma mudança de comportamento.
+   */
+  vagas?: number | null;
+  /** Quantas das `vagas` a família confirmou de fato (preenchido no RSVP). */
+  confirmadosQtd?: number | null;
+  /**
+   * Token compartilhado que agrupa vários convidados INDIVIDUAIS (já com
+   * nome/faixa/gênero próprios) sob um único link — diferente de `vagas`
+   * (que é um placeholder sem nomes). `null` = não agrupado. O `slug`
+   * individual de cada um continua funcionando normalmente também.
+   */
+  familiaGrupoSlug?: string | null;
+  /** Nome de exibição do grupo (ex.: "Família Silva") — igual em todo o grupo. */
+  familiaGrupoNome?: string | null;
 }
 
 export interface ItemCompra {

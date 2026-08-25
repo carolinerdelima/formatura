@@ -18,6 +18,10 @@ interface ConvidadoRow {
   convite_enviado: boolean;
   obs: string;
   slug: string;
+  vagas: number | null;
+  confirmados_qtd: number | null;
+  familia_grupo_slug: string | null;
+  familia_grupo_nome: string | null;
 }
 
 function fromRow(r: ConvidadoRow): Convidado {
@@ -34,6 +38,10 @@ function fromRow(r: ConvidadoRow): Convidado {
     conviteEnviado: r.convite_enviado,
     obs: r.obs,
     slug: r.slug,
+    vagas: r.vagas,
+    confirmadosQtd: r.confirmados_qtd,
+    familiaGrupoSlug: r.familia_grupo_slug,
+    familiaGrupoNome: r.familia_grupo_nome,
   };
 }
 
@@ -50,6 +58,10 @@ function toRowPatch(patch: Partial<Convidado>): Partial<ConvidadoRow> {
   if (patch.provavel !== undefined) row.provavel = patch.provavel;
   if (patch.conviteEnviado !== undefined) row.convite_enviado = patch.conviteEnviado;
   if (patch.obs !== undefined) row.obs = patch.obs;
+  if (patch.vagas !== undefined) row.vagas = patch.vagas;
+  if (patch.confirmadosQtd !== undefined) row.confirmados_qtd = patch.confirmadosQtd;
+  if (patch.familiaGrupoSlug !== undefined) row.familia_grupo_slug = patch.familiaGrupoSlug;
+  if (patch.familiaGrupoNome !== undefined) row.familia_grupo_nome = patch.familiaGrupoNome;
   return row;
 }
 
@@ -84,6 +96,10 @@ export async function insertConvidado(g: Convidado): Promise<boolean> {
     convite_enviado: g.conviteEnviado,
     obs: g.obs,
     slug: g.slug,
+    vagas: g.vagas ?? null,
+    confirmados_qtd: g.confirmadosQtd ?? null,
+    familia_grupo_slug: g.familiaGrupoSlug ?? null,
+    familia_grupo_nome: g.familiaGrupoNome ?? null,
   });
   if (error) {
     console.error('Falha ao criar convidado no Supabase:', error.message);
@@ -114,6 +130,10 @@ export async function upsertConvidados(list: Convidado[]): Promise<void> {
     obs: g.obs,
     // se o convidado restaurado não tinha slug (backup de versão antiga), gera um novo
     slug: g.slug || Math.random().toString(36).slice(2, 12),
+    vagas: g.vagas ?? null,
+    confirmados_qtd: g.confirmadosQtd ?? null,
+    familia_grupo_slug: g.familiaGrupoSlug ?? null,
+    familia_grupo_nome: g.familiaGrupoNome ?? null,
   }));
   const { error } = await supabase.from(TABLE).upsert(rows);
   if (error) {
@@ -129,6 +149,39 @@ export async function updateConvidado(id: string, patch: Partial<Convidado>): Pr
   if (error) {
     console.error('Falha ao atualizar convidado no Supabase:', error.message);
     toast('Não salvou essa edição no banco - tenta de novo.');
+  }
+}
+
+/**
+ * Agrupa vários convidados já cadastrados sob um link de família compartilhado
+ * — preserva todos os dados individuais (faixa, gênero, bebe) de cada um.
+ */
+export async function agruparEmFamilia(
+  ids: string[],
+  grupoSlug: string,
+  grupoNome: string,
+): Promise<void> {
+  if (!supabase || ids.length === 0) return;
+  const { error } = await supabase
+    .from(TABLE)
+    .update({ familia_grupo_slug: grupoSlug, familia_grupo_nome: grupoNome })
+    .in('id', ids);
+  if (error) {
+    console.error('Falha ao agrupar convidados no Supabase:', error.message);
+    toast('Não conseguiu agrupar no banco — tenta de novo.');
+  }
+}
+
+/** Desfaz um grupo de família — os convidados voltam a ser individuais (nada mais muda). */
+export async function desagruparFamilia(grupoSlug: string): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase
+    .from(TABLE)
+    .update({ familia_grupo_slug: null, familia_grupo_nome: null })
+    .eq('familia_grupo_slug', grupoSlug);
+  if (error) {
+    console.error('Falha ao desagrupar família no Supabase:', error.message);
+    toast('Não conseguiu desagrupar no banco — tenta de novo.');
   }
 }
 

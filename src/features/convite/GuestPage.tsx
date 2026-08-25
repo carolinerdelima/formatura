@@ -12,27 +12,43 @@ import {
   type CategoriaPresente,
 } from './giftSuggestions';
 import { linkComoChegar, linkSalvarNaAgenda } from './links';
-import { buscarConvite, enviarRsvp, type ConviteData } from './rsvp';
+import {
+  buscarConvite,
+  buscarConviteGrupo,
+  confirmarMembroGrupo,
+  enviarRsvp,
+  type ConviteData,
+  type GrupoData,
+} from './rsvp';
 
-type Fase = 'carregando' | 'nao-encontrado' | 'form' | 'obrigado';
+type Fase = 'carregando' | 'nao-encontrado' | 'form' | 'obrigado' | 'grupo';
 
 /** Página pública e pessoal de RSVP - `/c/:slug`. Sem login, sem cadastro. */
 export function GuestPage() {
   const { slug = '' } = useParams<{ slug: string }>();
   const [fase, setFase] = useState<Fase>('carregando');
   const [convite, setConvite] = useState<ConviteData | null>(null);
+  const [grupo, setGrupo] = useState<GrupoData | null>(null);
   const [respostaFinal, setRespostaFinal] = useState<'confirmado' | 'recusado' | null>(null);
 
   useEffect(() => {
     let ativo = true;
-    buscarConvite(slug).then((data) => {
+    buscarConvite(slug).then(async (data) => {
       if (!ativo) return;
-      if (!data) {
+      if (data) {
+        setConvite(data);
+        setFase('form');
+        return;
+      }
+      // não é um convite individual/família por vagas — tenta como grupo de família
+      const g = await buscarConviteGrupo(slug);
+      if (!ativo) return;
+      if (!g) {
         setFase('nao-encontrado');
         return;
       }
-      setConvite(data);
-      setFase('form');
+      setGrupo(g);
+      setFase('grupo');
     });
     return () => {
       ativo = false;
@@ -41,6 +57,10 @@ export function GuestPage() {
 
   if (fase === 'carregando') {
     return <CentroPagina>Carregando seu convite…</CentroPagina>;
+  }
+
+  if (fase === 'grupo' && grupo) {
+    return <GrupoPagina slug={slug} grupo={grupo} onAtualizar={setGrupo} />;
   }
 
   if (fase === 'nao-encontrado') {
@@ -117,9 +137,11 @@ function FormularioConvite({
   onEnviado: (r: 'confirmado' | 'recusado') => void;
   onFaseObrigado: () => void;
 }) {
-  const precisaFaixaGenero = convite.genero === '';
+  const ehFamilia = convite.vagas != null;
+  const precisaFaixaGenero = !ehFamilia && convite.genero === '';
   const [faixa, setFaixa] = useState<Faixa>(convite.faixa);
   const [genero, setGenero] = useState<Genero>(convite.genero);
+  const [qtd, setQtd] = useState(convite.confirmadosQtd ?? convite.vagas ?? 0);
   const [enviando, setEnviando] = useState<'confirmado' | 'recusado' | null>(null);
   const jaRespondeu = convite.status !== 'pendente';
   const [mudarResposta, setMudarResposta] = useState(false);
@@ -131,10 +153,23 @@ function FormularioConvite({
       status,
       precisaFaixaGenero ? faixa : undefined,
       precisaFaixaGenero ? genero : undefined,
+      ehFamilia ? qtd : undefined,
     );
     setEnviando(null);
     if (ok) {
       onEnviado(status);
+      onFaseObrigado();
+    } else {
+      toast('Não deu pra enviar agora - tenta de novo em instantes.');
+    }
+  };
+
+  const confirmarFamilia = async () => {
+    setEnviando('confirmado');
+    const ok = await enviarRsvp(slug, qtd > 0 ? 'confirmado' : 'recusado', undefined, undefined, qtd);
+    setEnviando(null);
+    if (ok) {
+      onEnviado(qtd > 0 ? 'confirmado' : 'recusado');
       onFaseObrigado();
     } else {
       toast('Não deu pra enviar agora - tenta de novo em instantes.');
@@ -172,8 +207,19 @@ function FormularioConvite({
       {jaRespondeu && !mudarResposta ? (
         <div className="card" style={{ marginTop: 18, textAlign: 'center' }}>
           <p style={{ margin: 0 }}>
-            Você já respondeu:{' '}
-            <b>{convite.status === 'confirmado' ? 'vai à festa 🎉' : 'não vai poder ir'}</b>
+            {ehFamilia ? (
+              <>
+                Vocês já responderam:{' '}
+                <b>
+                  {convite.confirmadosQtd ?? 0} de {convite.vagas} confirmaram
+                </b>
+              </>
+            ) : (
+              <>
+                Você já respondeu:{' '}
+                <b>{convite.status === 'confirmado' ? 'vai à festa 🎉' : 'não vai poder ir'}</b>
+              </>
+            )}
           </p>
           <button
             type="button"
@@ -183,6 +229,36 @@ function FormularioConvite({
           >
             Mudar resposta
           </button>
+        </div>
+      ) : ehFamilia ? (
+        <div className="card" style={{ marginTop: 18 }}>
+          <h3>Quantos de vocês vêm?</h3>
+          <p className="card-sub">
+            Essa família tem {convite.vagas} vaga{convite.vagas === 1 ? '' : 's'}. Escolha quantos
+            vão de fato.
+          </p>
+          <div className="row" style={{ marginTop: 10 }}>
+            <div>
+              <label className="fld">Confirmados</label>
+              <select value={qtd} onChange={(e) => setQtd(Number(e.target.value))}>
+                {Array.from({ length: (convite.vagas ?? 0) + 1 }, (_, i) => i).map((n) => (
+                  <option key={n} value={n}>
+                    {n} de {convite.vagas}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: 16 }}>
+            <button
+              type="button"
+              className="btn"
+              disabled={enviando !== null}
+              onClick={() => void confirmarFamilia()}
+            >
+              {enviando ? 'Enviando…' : 'Confirmar'}
+            </button>
+          </div>
         </div>
       ) : (
         <div className="card" style={{ marginTop: 18 }}>
@@ -227,6 +303,114 @@ function FormularioConvite({
           </div>
         </div>
       )}
+
+      <SecaoPresente />
+
+      <Toast />
+    </div>
+  );
+}
+
+/**
+ * Página de um GRUPO de família (convidados já cadastrados individualmente,
+ * agrupados sob um link compartilhado). Mostra cada pessoa pelo nome; cada
+ * uma confirma/recusa por conta própria — não é um formulário único com
+ * envio, cada clique já grava na hora (igual aos toggles da área admin).
+ */
+function GrupoPagina({
+  slug,
+  grupo,
+  onAtualizar,
+}: {
+  slug: string;
+  grupo: GrupoData;
+  onAtualizar: (g: GrupoData) => void;
+}) {
+  const [enviando, setEnviando] = useState<string | null>(null);
+
+  const responderMembro = async (membroSlug: string, status: 'confirmado' | 'recusado') => {
+    setEnviando(membroSlug);
+    const ok = await confirmarMembroGrupo(slug, membroSlug, status);
+    setEnviando(null);
+    if (ok) {
+      onAtualizar({
+        ...grupo,
+        membros: grupo.membros.map((m) => (m.slug === membroSlug ? { ...m, status } : m)),
+      });
+      toast('Resposta salva!');
+    } else {
+      toast('Não deu pra salvar agora - tenta de novo.');
+    }
+  };
+
+  const confirmados = grupo.membros.filter((m) => m.status === 'confirmado').length;
+
+  return (
+    <div style={{ maxWidth: 480, margin: '32px auto', padding: '0 16px' }}>
+      <div className="hero">
+        <div className="sundial" />
+        <div className="kicker">{CONVITE_INFO.nomeEvento}</div>
+        <h2>
+          Olá, <em>{grupo.familiaNome || 'família'}</em>!
+        </h2>
+        <div className="where">
+          📍 {CONVITE_INFO.local} · {CONVITE_INFO.endereco}
+          <br />
+          🗓️ {dataPorExtenso(CONVITE_INFO.dataHora)}, {horaCurta(CONVITE_INFO.dataHora)}
+        </div>
+        <div className="row" style={{ marginTop: 18 }}>
+          <a className="btn soft" href={linkComoChegar()} target="_blank" rel="noopener noreferrer">
+            📍 Como chegar
+          </a>
+          <a
+            className="btn soft"
+            href={linkSalvarNaAgenda()}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            🗓️ Salvar na agenda
+          </a>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 18 }}>
+        <h3>
+          Quem vem? <span className="chip" style={{ marginLeft: 8 }}>{confirmados}/{grupo.membros.length}</span>
+        </h3>
+        <p className="card-sub">Cada pessoa confirma por conta própria — pode mudar quando quiser.</p>
+        <div>
+          {grupo.membros.map((m) => (
+            <div
+              key={m.slug}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '10px 4px',
+                borderBottom: '1px dashed var(--line)',
+              }}
+            >
+              <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5 }}>{m.nome}</span>
+              <button
+                type="button"
+                className={`pill-toggle ${m.status === 'confirmado' ? 'paid' : 'due'}`}
+                disabled={enviando === m.slug}
+                onClick={() => void responderMembro(m.slug, 'confirmado')}
+              >
+                {enviando === m.slug ? '…' : 'Vou'}
+              </button>
+              <button
+                type="button"
+                className={`pill-toggle ${m.status === 'recusado' ? 'minor' : 'due'}`}
+                disabled={enviando === m.slug}
+                onClick={() => void responderMembro(m.slug, 'recusado')}
+              >
+                {enviando === m.slug ? '…' : 'Não vou'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <SecaoPresente />
 
