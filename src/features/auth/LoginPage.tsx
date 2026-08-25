@@ -41,7 +41,7 @@ export function LoginPage() {
           <h2 style={{ fontSize: 26 }}>
             Formatura da <em>Carol</em>
           </h2>
-          <p>Área administrativa - só você tem acesso.</p>
+          <p>Área administrativa.</p>
         </div>
 
         <div className="row" style={{ flexDirection: 'column' }}>
