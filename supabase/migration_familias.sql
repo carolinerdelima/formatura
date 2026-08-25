@@ -31,6 +31,10 @@ alter table public.convidados
 -- ------------------------------------------------------------
 -- Atualiza as funções públicas pra também expor/gravar vagas e confirmados_qtd
 -- ------------------------------------------------------------
+-- o retorno de rpc_get_convite ganhou colunas novas — Postgres não deixa só
+-- substituir quando a "forma" do retorno muda, precisa apagar antes.
+drop function if exists public.rpc_get_convite(text);
+
 create or replace function public.rpc_get_convite(p_slug text)
 returns table (
   nome text,
@@ -54,6 +58,10 @@ $$;
 
 revoke all on function public.rpc_get_convite(text) from public;
 grant execute on function public.rpc_get_convite(text) to anon, authenticated;
+
+-- ganhou um parâmetro novo (p_confirmados_qtd) — apaga a versão de 4
+-- parâmetros antes, senão fica com as duas versões coexistindo no banco.
+drop function if exists public.rpc_confirmar_presenca(text, text, text, text);
 
 create or replace function public.rpc_confirmar_presenca(
   p_slug text,
