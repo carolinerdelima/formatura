@@ -12,11 +12,14 @@
  * uma linha em `SUGESTOES_PRESENTE`.
  */
 
+/** Título mostrado acima do guia de preferências, no toggle "ver sugestões". */
+export const TITULO_PREFERENCIAS = 'Ao invés de definir algo, te conto meus gostos e tamanhos:';
+
 /** Guia principal - tamanhos, cores e estilo. Mostrado antes dos exemplos visuais. */
 export const PREFERENCIAS_BASICAS: string[] = [
-  'Acessórios / bijuterias / joias no dourado',
+  'Acessórios / bijuterias / jóias no dourado',
   'Calçado tamanho 37',
-  'Roupas ->  tamanho P ou M. Calça tamanho 38/40',
+  'Roupas -> tamanho P ou M. Calça tamanho 40',
   'Perfumes, body splashs, cremes com cheiro docinho ou florais',
   'Qualquer tipo de cosmético',
   'Acessórios pra computador (mouse, mousepad, teclado) rosas',

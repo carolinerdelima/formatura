@@ -1,7 +1,7 @@
 # Formatura da Carol - "Janta de formatura"
 
 App local de organização da festa de formatura (Ciência da Computação, 29/08/2026,
-Churrascaria Família Strapazzon - Farroupilha/RS). Migrado do HTML single-file
+Restaurante Família Strapazzon - Farroupilha/RS). Migrado do HTML single-file
 original para **Vite + React + TypeScript**, com hot reload e sem perder nenhuma
 funcionalidade nem a identidade visual.
 

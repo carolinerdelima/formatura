@@ -5,12 +5,15 @@
  */
 export const CONVITE_INFO = {
   nomeEvento: 'Formatura da Carol',
-  local: 'Churrascaria Família Strapazzon',
+  local: 'Restaurante Família Strapazzon',
   endereco: 'Rua VRS, 855 - São Marcos, Farroupilha/RS · 95180-000',
-  /** Mesmo formato do resto do app: `YYYY-MM-DDTHH:mm`. */
+  /**
+   * Mesmo formato do resto do app: `YYYY-MM-DDTHH:mm`. Usado só pra EXIBIR
+   * a data/hora na página — o botão "Adicionar à agenda" usa o arquivo
+   * `public/formatura-carol.ics` separadamente. Se mudar a data, atualize
+   * as DUAS coisas (aqui embaixo e o `.ics`), senão elas ficam divergentes.
+   */
   dataHora: '2026-09-05T19:00',
-  duracaoHoras: 5,
-  descricaoCalendario: 'Jantar e comemoração da formatura da Carol em Ciência da Computação ✨',
   pix: {
     tipo: 'Celular',
     chave: '51996642772',

@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from '../../components/toastStore';
 import { Toast } from '../../components/Toast';
-import { dataPorExtenso, horaCurta } from '../../lib/format';
+import { horaCurta } from '../../lib/format';
 import type { Faixa, Genero } from '../../types';
+import { ConviteFundo, DiplomaIlustracao, IconeCalendario, IconeMapa, TituloArco } from './ConviteArt';
+import './convite.css';
 import { CONVITE_INFO } from './conviteInfo';
 import {
   CATEGORIAS_PRESENTE,
   PREFERENCIAS_BASICAS,
   SUGESTOES_PRESENTE,
+  TITULO_PREFERENCIAS,
   type CategoriaPresente,
 } from './giftSuggestions';
 import { linkComoChegar, linkSalvarNaAgenda } from './links';
@@ -22,6 +25,10 @@ import {
 } from './rsvp';
 
 type Fase = 'carregando' | 'nao-encontrado' | 'form' | 'obrigado' | 'grupo';
+
+const DIA_SEMANA = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' });
+const DIA_NUM = new Intl.DateTimeFormat('pt-BR', { day: '2-digit' });
+const MES_ANO = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
 
 /** Página pública e pessoal de RSVP - `/c/:slug`. Sem login, sem cadastro. */
 export function GuestPage() {
@@ -56,7 +63,13 @@ export function GuestPage() {
   }, [slug]);
 
   if (fase === 'carregando') {
-    return <CentroPagina>Carregando seu convite…</CentroPagina>;
+    return (
+      <PaginaConvite>
+        <p style={{ textAlign: 'center', fontFamily: 'var(--serif)', color: '#9c7a4a' }}>
+          Carregando seu convite…
+        </p>
+      </PaginaConvite>
+    );
   }
 
   if (fase === 'grupo' && grupo) {
@@ -65,37 +78,35 @@ export function GuestPage() {
 
   if (fase === 'nao-encontrado') {
     return (
-      <CentroPagina>
-        <div className="card" style={{ maxWidth: 420, textAlign: 'center' }}>
-          <div style={{ fontSize: 32 }}>🌾</div>
-          <h2 style={{ marginTop: 10 }}>Convite não encontrado</h2>
-          <p style={{ color: 'var(--ink-soft)', marginTop: 8 }}>
+      <PaginaConvite>
+        <div className="convite-card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 32 }}>🌸</div>
+          <h3 style={{ marginTop: 10 }}>Convite não encontrado</h3>
+          <p className="sub">
             Esse link não corresponde a nenhum convite. Confira se copiou o endereço certinho, ou
             fale com a Carol.
           </p>
         </div>
-      </CentroPagina>
+      </PaginaConvite>
     );
   }
 
   if (fase === 'obrigado' && convite) {
     return (
-      <CentroPagina>
-        <div style={{ maxWidth: 420, width: '100%' }}>
-          <div className="card" style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 32 }}>{respostaFinal === 'confirmado' ? '🎉' : '💌'}</div>
-            <h2 style={{ marginTop: 10 }}>
-              {respostaFinal === 'confirmado' ? 'Presença confirmada!' : 'Resposta registrada'}
-            </h2>
-            <p style={{ color: 'var(--ink-soft)', marginTop: 8 }}>
-              {respostaFinal === 'confirmado'
-                ? `Que alegria, ${convite.nome}! Nos vemos lá ✨`
-                : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta :(`}
-            </p>
-          </div>
-          {respostaFinal === 'confirmado' ? <SecaoPresente /> : null}
+      <PaginaConvite>
+        <div className="convite-card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 32 }}>{respostaFinal === 'confirmado' ? '🎉' : '💌'}</div>
+          <h3 style={{ marginTop: 10 }}>
+            {respostaFinal === 'confirmado' ? 'Presença confirmada!' : 'Resposta registrada'}
+          </h3>
+          <p className="sub">
+            {respostaFinal === 'confirmado'
+              ? `Que alegria, ${convite.nome}! Nos vemos lá ✨`
+              : `Obrigada por avisar, ${convite.nome}. Você vai fazer falta :(`}
+          </p>
         </div>
-      </CentroPagina>
+        {respostaFinal === 'confirmado' ? <SecaoPresente /> : null}
+      </PaginaConvite>
     );
   }
 
@@ -109,19 +120,57 @@ export function GuestPage() {
   ) : null;
 }
 
-function CentroPagina({ children }: { children: React.ReactNode }) {
+/** Casca comum da página: fundo rosa+dourado com laços/confete nos cantos. */
+function PaginaConvite({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-      }}
-    >
-      {children}
+    <div className="convite-page">
+      <ConviteFundo />
+      <div className="convite-wrap">{children}</div>
       <Toast />
+    </div>
+  );
+}
+
+function Hero() {
+  const data = new Date(CONVITE_INFO.dataHora);
+  const diaSemana = DIA_SEMANA.format(data);
+  return (
+    <div className="convite-hero">
+      <TituloArco texto={CONVITE_INFO.nomeEvento.toUpperCase()} />
+      <DiplomaIlustracao />
+      <div className="convite-date">
+        <div>
+          <div className="dia-semana">{diaSemana}</div>
+          <div className="num">{DIA_NUM.format(data)}</div>
+        </div>
+        <div className="info">
+          {MES_ANO.format(data)}
+          <br />
+          às {horaCurta(CONVITE_INFO.dataHora)} horas
+        </div>
+      </div>
+      <p className="convite-frase">
+        Com o coração cheio de gratidão, convido você a celebrar esse momento comigo, no{' '}
+        {CONVITE_INFO.local}.
+      </p>
+      <div className="convite-acoes">
+        <a className="convite-acao" href={linkComoChegar()} target="_blank" rel="noopener noreferrer">
+          <IconeMapa />
+          <span>Ver endereço no mapa</span>
+        </a>
+        <a
+          className="convite-acao"
+          href={linkSalvarNaAgenda()}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <IconeCalendario />
+          <span>Adicionar à agenda</span>
+        </a>
+      </div>
+      <div className="convite-pill">
+        Janta, bebidas não alcoólicas e chopp por conta da formanda.
+      </div>
     </div>
   );
 }
@@ -177,36 +226,12 @@ function FormularioConvite({
   };
 
   return (
-    <div style={{ maxWidth: 480, margin: '32px auto', padding: '0 16px' }}>
-      <div className="hero">
-        <div className="sundial" />
-        <div className="kicker">{CONVITE_INFO.nomeEvento}</div>
-        <h2>
-          Olá, <em>{convite.nome || 'convidado'}</em>!
-        </h2>
-        <div className="where">
-          📍 {CONVITE_INFO.local} · {CONVITE_INFO.endereco}
-          <br />
-          🗓️ {dataPorExtenso(CONVITE_INFO.dataHora)}, {horaCurta(CONVITE_INFO.dataHora)}
-        </div>
-        <div className="row" style={{ marginTop: 18 }}>
-          <a className="btn soft" href={linkComoChegar()} target="_blank" rel="noopener noreferrer">
-            📍 Como chegar
-          </a>
-          <a
-            className="btn soft"
-            href={linkSalvarNaAgenda()}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🗓️ Salvar na agenda
-          </a>
-        </div>
-      </div>
+    <PaginaConvite>
+      <Hero />
 
       {jaRespondeu && !mudarResposta ? (
-        <div className="card" style={{ marginTop: 18, textAlign: 'center' }}>
-          <p style={{ margin: 0 }}>
+        <div className="convite-card" style={{ textAlign: 'center' }}>
+          <p style={{ margin: 0, fontFamily: 'var(--sans)' }}>
             {ehFamilia ? (
               <>
                 Vocês já responderam:{' '}
@@ -223,7 +248,7 @@ function FormularioConvite({
           </p>
           <button
             type="button"
-            className="btn ghost sm"
+            className="convite-btn ghost sm"
             style={{ marginTop: 10 }}
             onClick={() => setMudarResposta(true)}
           >
@@ -231,28 +256,23 @@ function FormularioConvite({
           </button>
         </div>
       ) : ehFamilia ? (
-        <div className="card" style={{ marginTop: 18 }}>
+        <div className="convite-card">
           <h3>Quantos de vocês vêm?</h3>
-          <p className="card-sub">
+          <p className="sub">
             Essa família tem {convite.vagas} vaga{convite.vagas === 1 ? '' : 's'}. Escolha quantos
             vão de fato.
           </p>
-          <div className="row" style={{ marginTop: 10 }}>
-            <div>
-              <label className="fld">Confirmados</label>
-              <select value={qtd} onChange={(e) => setQtd(Number(e.target.value))}>
-                {Array.from({ length: (convite.vagas ?? 0) + 1 }, (_, i) => i).map((n) => (
-                  <option key={n} value={n}>
-                    {n} de {convite.vagas}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="row" style={{ marginTop: 16 }}>
+          <select className="convite-select" value={qtd} onChange={(e) => setQtd(Number(e.target.value))}>
+            {Array.from({ length: (convite.vagas ?? 0) + 1 }, (_, i) => i).map((n) => (
+              <option key={n} value={n}>
+                {n} de {convite.vagas}
+              </option>
+            ))}
+          </select>
+          <div style={{ marginTop: 16 }}>
             <button
               type="button"
-              className="btn"
+              className="convite-btn"
               disabled={enviando !== null}
               onClick={() => void confirmarFamilia()}
             >
@@ -261,21 +281,35 @@ function FormularioConvite({
           </div>
         </div>
       ) : (
-        <div className="card" style={{ marginTop: 18 }}>
+        <div className="convite-card">
           <h3>Você vem?</h3>
           {precisaFaixaGenero ? (
-            <div className="row" style={{ marginTop: 10 }}>
-              <div>
-                <label className="fld">Faixa etária</label>
-                <select value={faixa} onChange={(e) => setFaixa(e.target.value as Faixa)}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 10, marginBottom: 16 }}>
+              <div style={{ flex: 1 }}>
+                <label className="sub" style={{ display: 'block', margin: '0 0 4px' }}>
+                  Faixa etária
+                </label>
+                <select
+                  className="convite-select"
+                  style={{ width: '100%' }}
+                  value={faixa}
+                  onChange={(e) => setFaixa(e.target.value as Faixa)}
+                >
                   <option value="adulto">Adulto</option>
                   <option value="crianca">Criança</option>
                   <option value="adolescente">Adolescente</option>
                 </select>
               </div>
-              <div>
-                <label className="fld">Gênero</label>
-                <select value={genero} onChange={(e) => setGenero(e.target.value as Genero)}>
+              <div style={{ flex: 1 }}>
+                <label className="sub" style={{ display: 'block', margin: '0 0 4px' }}>
+                  Gênero
+                </label>
+                <select
+                  className="convite-select"
+                  style={{ width: '100%' }}
+                  value={genero}
+                  onChange={(e) => setGenero(e.target.value as Genero)}
+                >
                   <option value="">Selecione</option>
                   <option value="F">Feminino</option>
                   <option value="M">Masculino</option>
@@ -283,10 +317,10 @@ function FormularioConvite({
               </div>
             </div>
           ) : null}
-          <div className="row" style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
             <button
               type="button"
-              className="btn"
+              className="convite-btn"
               disabled={enviando !== null}
               onClick={() => void responder('confirmado')}
             >
@@ -294,7 +328,7 @@ function FormularioConvite({
             </button>
             <button
               type="button"
-              className="btn ghost"
+              className="convite-btn ghost"
               disabled={enviando !== null}
               onClick={() => void responder('recusado')}
             >
@@ -305,17 +339,14 @@ function FormularioConvite({
       )}
 
       <SecaoPresente />
-
-      <Toast />
-    </div>
+    </PaginaConvite>
   );
 }
 
 /**
  * Página de um GRUPO de família (convidados já cadastrados individualmente,
  * agrupados sob um link compartilhado). Mostra cada pessoa pelo nome; cada
- * uma confirma/recusa por conta própria — não é um formulário único com
- * envio, cada clique já grava na hora (igual aos toggles da área admin).
+ * uma confirma/recusa por conta própria.
  */
 function GrupoPagina({
   slug,
@@ -346,54 +377,24 @@ function GrupoPagina({
   const confirmados = grupo.membros.filter((m) => m.status === 'confirmado').length;
 
   return (
-    <div style={{ maxWidth: 480, margin: '32px auto', padding: '0 16px' }}>
-      <div className="hero">
-        <div className="sundial" />
-        <div className="kicker">{CONVITE_INFO.nomeEvento}</div>
-        <h2>
-          Olá, <em>{grupo.familiaNome || 'família'}</em>!
-        </h2>
-        <div className="where">
-          📍 {CONVITE_INFO.local} · {CONVITE_INFO.endereco}
-          <br />
-          🗓️ {dataPorExtenso(CONVITE_INFO.dataHora)}, {horaCurta(CONVITE_INFO.dataHora)}
-        </div>
-        <div className="row" style={{ marginTop: 18 }}>
-          <a className="btn soft" href={linkComoChegar()} target="_blank" rel="noopener noreferrer">
-            📍 Como chegar
-          </a>
-          <a
-            className="btn soft"
-            href={linkSalvarNaAgenda()}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🗓️ Salvar na agenda
-          </a>
-        </div>
-      </div>
-
-      <div className="card" style={{ marginTop: 18 }}>
+    <PaginaConvite>
+      <Hero />
+      <div className="convite-card">
         <h3>
-          Quem vem? <span className="chip" style={{ marginLeft: 8 }}>{confirmados}/{grupo.membros.length}</span>
+          Quem vem?{' '}
+          <span className="convite-pill" style={{ marginTop: 0, verticalAlign: 'middle' }}>
+            {confirmados}/{grupo.membros.length}
+          </span>
         </h3>
-        <p className="card-sub">Cada pessoa confirma por conta própria — pode mudar quando quiser.</p>
+        <p className="sub">Cada pessoa confirma por conta própria — pode mudar quando quiser.</p>
         <div>
           {grupo.membros.map((m) => (
-            <div
-              key={m.slug}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '10px 4px',
-                borderBottom: '1px dashed var(--line)',
-              }}
-            >
-              <span style={{ flex: 1, fontWeight: 600, fontSize: 14.5 }}>{m.nome}</span>
+            <div className="convite-membro" key={m.slug}>
+              <span className="nome">{m.nome}</span>
               <button
                 type="button"
-                className={`pill-toggle ${m.status === 'confirmado' ? 'paid' : 'due'}`}
+                className="convite-btn sm"
+                style={m.status !== 'confirmado' ? { background: '#e9e2d8', color: '#5a3d2b' } : undefined}
                 disabled={enviando === m.slug}
                 onClick={() => void responderMembro(m.slug, 'confirmado')}
               >
@@ -401,7 +402,7 @@ function GrupoPagina({
               </button>
               <button
                 type="button"
-                className={`pill-toggle ${m.status === 'recusado' ? 'minor' : 'due'}`}
+                className="convite-btn ghost sm"
                 disabled={enviando === m.slug}
                 onClick={() => void responderMembro(m.slug, 'recusado')}
               >
@@ -411,16 +412,12 @@ function GrupoPagina({
           ))}
         </div>
       </div>
-
       <SecaoPresente />
-
-      <Toast />
-    </div>
+    </PaginaConvite>
   );
 }
 
-/** Bloco entre a descrição do evento e a confirmação: sugestões de presente / chave PIX,
- *  cada um revelado só ao clicar - não empurra a tela de confirmação pra baixo à toa. */
+/** Bloco de sugestões de presente / chave PIX, cada um revelado só ao clicar. */
 function SecaoPresente() {
   const { pix } = CONVITE_INFO;
   const [verSugestoes, setVerSugestoes] = useState(false);
@@ -429,20 +426,28 @@ function SecaoPresente() {
   const categorias = Object.keys(CATEGORIAS_PRESENTE) as CategoriaPresente[];
 
   return (
-    <div className="card" style={{ marginTop: 18 }}>
-      <p style={{ margin: 0 }}>🎁 Deseja dar algum presente?</p>
-      <div className="row" style={{ marginTop: 10 }}>
-        <button type="button" className="btn ghost sm" onClick={() => setVerSugestoes((v) => !v)}>
+    <div className="convite-card">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <img src="/presente-icone.png" alt="" style={{ width: 26, height: 26 }} />
+        <p style={{ margin: 0, fontFamily: 'var(--sans)', fontWeight: 700 }}>
+          Deseja dar algum presente?
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: 10, marginTop: 10, flexWrap: 'wrap' }}>
+        <button type="button" className="convite-btn ghost sm" onClick={() => setVerSugestoes((v) => !v)}>
           {verSugestoes ? 'Ocultar sugestões' : 'Clique aqui pra ver sugestões'}
         </button>
-        <button type="button" className="btn ghost sm" onClick={() => setVerPix((v) => !v)}>
+        <button type="button" className="convite-btn ghost sm" onClick={() => setVerPix((v) => !v)}>
           {verPix ? 'Ocultar chave PIX' : 'Clique aqui para ver a chave PIX'}
         </button>
       </div>
 
       {verSugestoes ? (
         <div style={{ marginTop: 14 }}>
-          <ul style={{ fontSize: 13.5, color: 'var(--ink-soft)', paddingLeft: 18, margin: 0 }}>
+          <p style={{ fontFamily: 'var(--serif)', color: 'var(--cv-gold)', fontSize: 15, margin: '0 0 8px' }}>
+            {TITULO_PREFERENCIAS}
+          </p>
+          <ul style={{ fontSize: 13.5, color: 'var(--cv-ink)', paddingLeft: 18, margin: 0 }}>
             {PREFERENCIAS_BASICAS.map((p) => (
               <li key={p}>{p}</li>
             ))}
@@ -450,8 +455,10 @@ function SecaoPresente() {
 
           {SUGESTOES_PRESENTE.length ? (
             <div style={{ marginTop: 18 }}>
-              <h4 style={{ fontSize: 14, margin: '0 0 4px' }}>💭 Exemplos do gosto da Carol</h4>
-              <p style={{ fontSize: 12, color: 'var(--ink-soft)', margin: '0 0 10px' }}>
+              <h4 style={{ fontSize: 14, margin: '0 0 4px', color: 'var(--cv-gold)' }}>
+                💭 Exemplos do gosto da Carol
+              </h4>
+              <p className="sub" style={{ margin: '0 0 10px' }}>
                 São só referências pra pegar a ideia - não precisa ser exatamente isso.
               </p>
               {categorias.map((cat) => {
@@ -486,13 +493,13 @@ function SecaoPresente() {
             />
           ) : null}
           {pix.chave ? (
-            <div className="chiprow" style={{ justifyContent: 'center' }}>
-              <span className="chip">
-                {pix.tipo}: <b>{pix.chave}</b>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <span className="convite-pill" style={{ marginTop: 0 }}>
+                {pix.tipo}: {pix.chave}
               </span>
               <button
                 type="button"
-                className="btn sm soft"
+                className="convite-btn ghost sm"
                 onClick={() => {
                   void navigator.clipboard.writeText(pix.chave);
                   toast('Chave PIX copiada!');
@@ -502,9 +509,7 @@ function SecaoPresente() {
               </button>
             </div>
           ) : (
-            <p className="empty" style={{ textAlign: 'left' }}>
-              Chave PIX ainda não cadastrada.
-            </p>
+            <p className="sub">Chave PIX ainda não cadastrada.</p>
           )}
         </div>
       ) : null}

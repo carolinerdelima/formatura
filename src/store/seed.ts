@@ -10,7 +10,7 @@ export function seed(): AppState {
     festa: {
       titulo: 'Formatura - Ciência da Computação',
       dataHora: '2026-08-29T18:00',
-      local: 'Churrascaria Família Strapazzon',
+      local: 'Restaurante Família Strapazzon',
       endereco: 'Rua VRS, 855 - São Marcos, Farroupilha/RS · 95180-000',
     },
     bebida: { choppLitros: null },

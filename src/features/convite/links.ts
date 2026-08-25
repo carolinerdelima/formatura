@@ -6,25 +6,14 @@ export function linkComoChegar(): string {
   return `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
-/** Formata uma data local (sem fuso) no padrão `YYYYMMDDTHHmmss` exigido pelo Google Calendar. */
-function formatoGCal(d: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return (
-    `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}` +
-    `T${pad(d.getHours())}${pad(d.getMinutes())}00`
-  );
-}
-
-/** Link "Adicionar ao Google Agenda" com data/local já preenchidos. */
+/**
+ * Link "Adicionar à agenda" — aponta pro arquivo `.ics` estático
+ * (`public/formatura-carol.ics`), não pra um link do Google Agenda gerado
+ * na hora. O `.ics` abre direto no app de calendário nativo em qualquer
+ * aparelho (Android, iPhone, desktop) sem as inconsistências de fuso que o
+ * link do Google Calendar tinha em alguns Android. Pra mudar data/horário/
+ * texto do evento, edite `public/formatura-carol.ics` diretamente.
+ */
 export function linkSalvarNaAgenda(): string {
-  const inicio = new Date(CONVITE_INFO.dataHora);
-  const fim = new Date(inicio.getTime() + CONVITE_INFO.duracaoHoras * 60 * 60 * 1000);
-  const params = new URLSearchParams({
-    action: 'TEMPLATE',
-    text: CONVITE_INFO.nomeEvento,
-    dates: `${formatoGCal(inicio)}/${formatoGCal(fim)}`,
-    location: `${CONVITE_INFO.local}, ${CONVITE_INFO.endereco}`,
-    details: CONVITE_INFO.descricaoCalendario,
-  });
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  return '/formatura-carol.ics';
 }

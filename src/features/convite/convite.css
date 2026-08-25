@@ -1,0 +1,232 @@
+/* ============================================================
+   Identidade visual só da página pública do convidado (/c/:slug) —
+   rosa + dourado, baseada no convite que a Carol desenhou.
+   Não afeta a área administrativa (que continua no tema terracota).
+   ============================================================ */
+.convite-page {
+  --cv-bg: #fbd9e8;
+  --cv-bg-soft: #fdeaf2;
+  --cv-card: #fff7fa;
+  --cv-gold: #9c7a4a;
+  --cv-gold-2: #b08a52;
+  --cv-pink: #d88fa8;
+  --cv-pink-dark: #c46f8c;
+  --cv-ink: #5a3d2b;
+
+  min-height: 100vh;
+  background: var(--cv-bg);
+  background-image:
+    repeating-linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.35) 0px,
+      rgba(255, 255, 255, 0.35) 1px,
+      transparent 1px,
+      transparent 34px
+    );
+  color: var(--cv-ink);
+  padding: 28px 16px 48px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.convite-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* confete + laços dourados nos cantos */
+.convite-confete {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.convite-hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 8px;
+}
+
+.convite-title-arc {
+  width: 100%;
+  height: 92px;
+  overflow: visible;
+}
+.convite-title-arc text {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 600;
+  fill: var(--cv-gold);
+  letter-spacing: 0.03em;
+}
+
+.convite-diploma {
+  width: 150px;
+  margin: 4px auto 6px;
+  display: block;
+}
+
+.convite-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.convite-date .dia-semana {
+  align-self: flex-start;
+  margin-top: 2px;
+}
+.convite-date .num {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 1;
+  color: var(--cv-gold);
+  font-weight: 500;
+}
+.convite-date .info {
+  text-align: left;
+  font-family: var(--serif);
+  color: var(--cv-gold);
+  font-size: 16px;
+  line-height: 1.35;
+}
+.convite-date .dia-semana {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--cv-gold-2);
+  text-transform: capitalize;
+}
+
+.convite-frase {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  color: var(--cv-gold);
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 14px auto 0;
+}
+
+.convite-acoes {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 20px;
+}
+.convite-acao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--cv-gold);
+  width: 90px;
+}
+.convite-acao svg {
+  width: 44px;
+  height: 44px;
+}
+.convite-acao span {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--cv-ink);
+  line-height: 1.25;
+}
+
+.convite-pill {
+  display: inline-block;
+  margin-top: 20px;
+  background: var(--cv-pink);
+  color: #fff;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  box-shadow: 0 6px 16px -8px rgba(196, 111, 140, 0.6);
+}
+
+/* cards abaixo do hero (RSVP, presentes, grupo) — mesma linguagem visual */
+.convite-card {
+  position: relative;
+  z-index: 1;
+  background: var(--cv-card);
+  border: 1px solid rgba(216, 143, 168, 0.35);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-top: 18px;
+  box-shadow: 0 12px 28px -18px rgba(154, 90, 60, 0.35);
+}
+.convite-card h3 {
+  font-family: var(--serif);
+  color: var(--cv-gold);
+  font-size: 19px;
+  margin: 0 0 4px;
+}
+.convite-card .sub {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--cv-gold-2);
+  margin: 0 0 12px;
+}
+
+.convite-btn {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  border-radius: 999px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background: var(--cv-pink);
+  color: #fff;
+  transition: filter 0.15s;
+}
+.convite-btn:hover {
+  filter: brightness(1.05);
+}
+.convite-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.convite-btn.ghost {
+  background: transparent;
+  color: var(--cv-pink-dark);
+  border: 1.5px solid var(--cv-pink);
+}
+.convite-btn.sm {
+  padding: 7px 14px;
+  font-size: 12px;
+}
+
+.convite-select,
+.convite-page select {
+  font-family: var(--sans);
+  border: 1.5px solid rgba(216, 143, 168, 0.5);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--cv-ink);
+  background: #fff;
+}
+
+.convite-membro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 2px;
+  border-bottom: 1px dashed rgba(216, 143, 168, 0.4);
+}
+.convite-membro:last-child {
+  border-bottom: 0;
+}
+.convite-membro .nome {
+  flex: 1;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cv-ink);
+}
