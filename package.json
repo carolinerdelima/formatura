@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Organizador da formatura da Carol — Golden Hour at the Farm",
+  "description": "Organizador da formatura da Carol - Janta de formatura",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

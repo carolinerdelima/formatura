@@ -14,7 +14,7 @@ export const STORAGE_KEY = 'festaFormatura_carol_v2';
 
 /**
  * Camada de persistência isolada. Hoje é localStorage; para trocar por uma API
- * basta reimplementar `load`/`save` aqui — nenhum componente conhece o storage.
+ * basta reimplementar `load`/`save` aqui - nenhum componente conhece o storage.
  */
 export interface StorageAdapter {
   load(): AppState;

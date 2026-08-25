@@ -49,7 +49,7 @@ async function pushRemoteState(state: AppState): Promise<void> {
     if (!supabase) return;
 
     // `convidados` (festa) agora vive na tabela própria `convidados`, com RLS
-    // por linha e RPCs públicas — não duplica mais dentro do blob JSON.
+    // por linha e RPCs públicas - não duplica mais dentro do blob JSON.
     const dataSemConvidados: Omit<AppState, 'convidados'> = {
         festa: state.festa,
         bebida: state.bebida,

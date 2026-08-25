@@ -2,9 +2,9 @@
  * Sugestões de presente mostradas na página do convidado (`/c/:slug`), dentro
  * do toggle "ver sugestões". Duas partes:
  *
- * 1. `PREFERENCIAS_BASICAS` — o guia principal (tamanhos, cores, estilo).
+ * 1. `PREFERENCIAS_BASICAS` - o guia principal (tamanhos, cores, estilo).
  *    É o que a maioria dos convidados realmente usa.
- * 2. `SUGESTOES_PRESENTE` — exemplos visuais do gosto da Carol, só
+ * 2. `SUGESTOES_PRESENTE` - exemplos visuais do gosto da Carol, só
  *    referência, organizados por categoria, do mais simples ao mais caro
  *    dentro de cada uma.
  *
@@ -12,7 +12,7 @@
  * uma linha em `SUGESTOES_PRESENTE`.
  */
 
-/** Guia principal — tamanhos, cores e estilo. Mostrado antes dos exemplos visuais. */
+/** Guia principal - tamanhos, cores e estilo. Mostrado antes dos exemplos visuais. */
 export const PREFERENCIAS_BASICAS: string[] = [
   'Acessórios / bijuterias / joias no dourado',
   'Calçado tamanho 37',

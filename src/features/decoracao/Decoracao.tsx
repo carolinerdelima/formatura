@@ -45,7 +45,7 @@ export function Decoracao() {
           <div className="m-card">
             <h4>🍰 Mesa de doces</h4>
             <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', margin: 0 }}>
-              Nada de painel gigante — que pareça que "sempre esteve ali". Madeira, flores crescendo
+              Nada de painel gigante - que pareça que "sempre esteve ali". Madeira, flores crescendo
               pelos cantos, velas, livros antigos, porta-retratos, lanternas, frutas (uvas, figos,
               peras), cerâmicas e cristais.
             </p>

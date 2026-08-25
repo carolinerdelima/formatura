@@ -9,7 +9,7 @@ interface PendingState {
 
 /**
  * Rastreia convidados recém-criados que ainda não confirmaram a gravação no
- * banco — evita que o link seja copiado antes de existir de verdade do outro
+ * banco - evita que o link seja copiado antes de existir de verdade do outro
  * lado (o RSVP daria "convite não encontrado" nesse intervalo).
  */
 export const usePendingConvidadosStore = create<PendingState>()((set) => ({

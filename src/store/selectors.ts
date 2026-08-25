@@ -18,7 +18,7 @@ export const pagoDe = (list: ItemCompra[]): number =>
  *
  * Duas bases de cálculo coexistem de propósito:
  * - "Considerados" (confirmados + pendentes, exclui quem recusou): usado para planejar
- *   lembrancinhas e perfil de convidados — não dá pra esperar todo mundo confirmar.
+ *   lembrancinhas e perfil de convidados - não dá pra esperar todo mundo confirmar.
  * - Confirmados: usado só para o chopp, que é comprado mais perto da data.
  */
 export function guestMetrics(list: Convidado[]): GuestMetrics {

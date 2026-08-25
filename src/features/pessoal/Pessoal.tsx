@@ -17,7 +17,7 @@ export function Pessoal() {
 
       <Note>
         👗 <b>Vestido dos sonhos:</b> rosa antigo, tecido acetinado fosco, caimento fluido, decote
-        elegante, pouco brilho, bem feminino — conversa com toda a paleta.
+        elegante, pouco brilho, bem feminino - conversa com toda a paleta.
       </Note>
 
       <div style={{ marginTop: 18 }} className="grid">

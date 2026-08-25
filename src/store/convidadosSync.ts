@@ -4,7 +4,7 @@ import type { Convidado } from '../types';
 
 const TABLE = 'convidados';
 
-/** Formato das linhas no Postgres (snake_case) — convertido de/para `Convidado` (camelCase). */
+/** Formato das linhas no Postgres (snake_case) - convertido de/para `Convidado` (camelCase). */
 interface ConvidadoRow {
   id: string;
   nome: string;
@@ -53,7 +53,7 @@ function toRowPatch(patch: Partial<Convidado>): Partial<ConvidadoRow> {
   return row;
 }
 
-/** Busca todos os convidados da festa (exige sessão autenticada — RLS bloqueia `anon`). */
+/** Busca todos os convidados da festa (exige sessão autenticada - RLS bloqueia `anon`). */
 export async function fetchConvidados(): Promise<Convidado[] | null> {
   if (!supabase) return null;
   const { data, error } = await supabase.from(TABLE).select('*').order('nome');
@@ -67,7 +67,7 @@ export async function fetchConvidados(): Promise<Convidado[] | null> {
 
 /**
  * Insere um convidado novo (id e slug já gerados no cliente).
- * @returns `true` se a gravação foi confirmada — só aí o link dele é real.
+ * @returns `true` se a gravação foi confirmada - só aí o link dele é real.
  */
 export async function insertConvidado(g: Convidado): Promise<boolean> {
   if (!supabase) return false;
@@ -87,14 +87,14 @@ export async function insertConvidado(g: Convidado): Promise<boolean> {
   });
   if (error) {
     console.error('Falha ao criar convidado no Supabase:', error.message);
-    toast(`Não salvou "${g.nome}" no banco — o link dele não vai funcionar. Tenta de novo.`);
+    toast(`Não salvou "${g.nome}" no banco - o link dele não vai funcionar. Tenta de novo.`);
     return false;
   }
   return true;
 }
 
 /**
- * Insere ou atualiza vários convidados de uma vez (por `id`) — usado ao
+ * Insere ou atualiza vários convidados de uma vez (por `id`) - usado ao
  * restaurar um backup `.json`, pra garantir que a tabela remota fica igual
  * ao que acabou de ser restaurado localmente, e não o contrário.
  */
@@ -118,7 +118,7 @@ export async function upsertConvidados(list: Convidado[]): Promise<void> {
   const { error } = await supabase.from(TABLE).upsert(rows);
   if (error) {
     console.error('Falha ao restaurar convidados no Supabase:', error.message);
-    toast('Falha ao gravar os convidados restaurados no banco — veja o console.');
+    toast('Falha ao gravar os convidados restaurados no banco - veja o console.');
   }
 }
 
@@ -128,7 +128,7 @@ export async function updateConvidado(id: string, patch: Partial<Convidado>): Pr
   const { error } = await supabase.from(TABLE).update(toRowPatch(patch)).eq('id', id);
   if (error) {
     console.error('Falha ao atualizar convidado no Supabase:', error.message);
-    toast('Não salvou essa edição no banco — tenta de novo.');
+    toast('Não salvou essa edição no banco - tenta de novo.');
   }
 }
 
@@ -138,13 +138,13 @@ export async function deleteConvidado(id: string): Promise<void> {
   const { error } = await supabase.from(TABLE).delete().eq('id', id);
   if (error) {
     console.error('Falha ao remover convidado no Supabase:', error.message);
-    toast('Não conseguiu remover no banco — tenta de novo.');
+    toast('Não conseguiu remover no banco - tenta de novo.');
   }
 }
 
 const pendingPatches = new Map<string, Partial<Convidado>>();
 const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>();
-/** Espera após a última edição de um convidado antes de gravar — evita uma
+/** Espera após a última edição de um convidado antes de gravar - evita uma
  *  requisição por tecla digitada. Patches sucessivos do mesmo convidado
  *  dentro da janela se acumulam num só envio. */
 const UPDATE_DEBOUNCE_MS = 900;
@@ -170,7 +170,7 @@ export function scheduleConvidadoUpdate(id: string, patch: Partial<Convidado>): 
 }
 
 /**
- * Assina mudanças em tempo real na tabela (INSERT/UPDATE/DELETE) — é o que
+ * Assina mudanças em tempo real na tabela (INSERT/UPDATE/DELETE) - é o que
  * faz um RSVP de convidado aparecer na aba Convidados sem precisar recarregar.
  * Retorna uma função para cancelar a assinatura.
  */

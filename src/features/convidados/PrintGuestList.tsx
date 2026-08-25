@@ -8,7 +8,7 @@ import { usePrintTargetStore } from './printTargetStore';
 const faixaLabel = (g: Convidado) =>
   g.faixa === 'crianca' ? 'Criança' : g.faixa === 'adolescente' ? 'Adolescente' : 'Adulto';
 const generoLabel = (g: Convidado) =>
-  g.genero === 'F' ? 'Feminino' : g.genero === 'M' ? 'Masculino' : '—';
+  g.genero === 'F' ? 'Feminino' : g.genero === 'M' ? 'Masculino' : '-';
 const statusLabel = (g: Convidado) =>
   g.status === 'confirmado' ? 'Confirmado' : g.status === 'recusado' ? 'Recusou' : 'Pendente';
 
@@ -16,12 +16,12 @@ interface GuestListPrintableProps {
   eyebrow: string;
   titulo: string;
   subtitulo: string;
-  /** Linha de local/data — omitida quando não há informação de evento a mostrar. */
+  /** Linha de local/data - omitida quando não há informação de evento a mostrar. */
   meta?: ReactNode;
   convidados: Convidado[];
 }
 
-/** Marcação pura da folha de impressão — sem depender de qual evento é. */
+/** Marcação pura da folha de impressão - sem depender de qual evento é. */
 function GuestListPrintable({ eyebrow, titulo, subtitulo, meta, convidados }: GuestListPrintableProps) {
   const gm = guestMetrics(convidados);
   const ordenados = [...convidados].sort((a, b) =>
@@ -76,13 +76,13 @@ function GuestListPrintable({ eyebrow, titulo, subtitulo, meta, convidados }: Gu
             ordenados.map((g, i) => (
               <tr key={g.id}>
                 <td>{i + 1}</td>
-                <td>{g.nome || '—'}</td>
-                <td>{g.grupo || '—'}</td>
+                <td>{g.nome || '-'}</td>
+                <td>{g.grupo || '-'}</td>
                 <td>{faixaLabel(g)}</td>
                 <td>{generoLabel(g)}</td>
                 <td>{statusLabel(g)}</td>
                 <td>{g.conviteEnviado ? 'Sim' : 'Não'}</td>
-                <td>{g.faixa !== 'adulto' ? '—' : g.bebe ? 'Sim' : 'Não'}</td>
+                <td>{g.faixa !== 'adulto' ? '-' : g.bebe ? 'Sim' : 'Não'}</td>
               </tr>
             ))
           ) : (
@@ -105,7 +105,7 @@ function GuestListPrintable({ eyebrow, titulo, subtitulo, meta, convidados }: Gu
 }
 
 /**
- * Fica sempre montada mas invisível na tela — só o `@media print` a revela,
+ * Fica sempre montada mas invisível na tela - só o `@media print` a revela,
  * então `window.print()` ("Salvar como PDF") gera o documento pronto pra
  * cerimonialista. Mostra a lista da festa ou da colação de acordo com o
  * `printTargetStore`, setado por `imprimirListaConvidados()`.
@@ -119,9 +119,9 @@ export function PrintGuestList() {
   if (target === 'colacao') {
     return (
       <GuestListPrintable
-        eyebrow="Golden Hour at the Farm"
+        eyebrow="Janta de formatura"
         titulo="Colação de Grau"
-        subtitulo="Colação de grau de Carol — Ciência da Computação"
+        subtitulo="Colação de grau de Carol - Ciência da Computação"
         convidados={convidadosColacao}
       />
     );
@@ -131,7 +131,7 @@ export function PrintGuestList() {
   const hora = horaCurta(festa.dataHora);
   const meta = (
     <>
-      📍 {festa.local} — {festa.endereco}
+      📍 {festa.local} - {festa.endereco}
       {data ? (
         <>
           <br />
@@ -143,9 +143,9 @@ export function PrintGuestList() {
 
   return (
     <GuestListPrintable
-      eyebrow="Golden Hour at the Farm"
+      eyebrow="Janta de formatura"
       titulo="Formatura"
-      subtitulo="Formatura de Carol — Ciência da Computação"
+      subtitulo="Formatura de Carol - Ciência da Computação"
       meta={meta}
       convidados={convidadosFesta}
     />

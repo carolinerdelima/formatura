@@ -48,7 +48,7 @@ export function Papelaria() {
       />
 
       <Card>
-        <CardTitle ic="💌">Convite — direção criativa</CardTitle>
+        <CardTitle ic="💌">Convite - direção criativa</CardTitle>
         <p style={{ fontSize: 14, color: 'var(--ink-soft)', margin: '0 0 8px' }}>
           Nada minimalista: papel texturizado, florais em aquarela, tipografia clássica, lacre de
           cera, cordão de algodão e uma ilustração botânica delicada.

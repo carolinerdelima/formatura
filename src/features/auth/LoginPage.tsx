@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useSession } from './useSession';
 
-/** Tela de login — só a admin (você) tem conta aqui. Sem cadastro público. */
+/** Tela de login - só a admin (você) tem conta aqui. Sem cadastro público. */
 export function LoginPage() {
   const { session } = useSession();
   const [email, setEmail] = useState('');
@@ -37,11 +37,11 @@ export function LoginPage() {
     >
       <div className="card" style={{ maxWidth: 360, width: '100%' }}>
         <div className="view-head" style={{ marginBottom: 18 }}>
-          <div className="eyebrow">Golden Hour at the Farm</div>
+          <div className="eyebrow">Janta de formatura</div>
           <h2 style={{ fontSize: 26 }}>
             Formatura da <em>Carol</em>
           </h2>
-          <p>Área administrativa — só você tem acesso.</p>
+          <p>Área administrativa - só você tem acesso.</p>
         </div>
 
         <div className="row" style={{ flexDirection: 'column' }}>

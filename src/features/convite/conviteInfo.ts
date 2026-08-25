@@ -1,7 +1,7 @@
 /**
  * Dados fixos que aparecem na página pública do convidado (`/c/:slug`).
  * São os mesmos pra todo mundo, então ficam direto no código em vez de
- * vir do banco — se a data, o local ou a chave PIX mudarem, edite aqui.
+ * vir do banco - se a data, o local ou a chave PIX mudarem, edite aqui.
  */
 export const CONVITE_INFO = {
   nomeEvento: 'Formatura da Carol',
@@ -14,7 +14,7 @@ export const CONVITE_INFO = {
   pix: {
     tipo: 'Celular',
     chave: '51996642772',
-    /** Arquivo em `public/` — servido direto da raiz do site. */
+    /** Arquivo em `public/` - servido direto da raiz do site. */
     qrImagem: '/pix-qr.jpeg',
   },
 };

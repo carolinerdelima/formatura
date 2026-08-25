@@ -31,7 +31,7 @@ export function Convidados() {
       <ViewHead
         eyebrow="Convidados"
         title="👥 Controle de convidados"
-        desc="Meta de ~80 convidados. Escolha a faixa etária (Adulto, Criança ou Adolescente) e o gênero de cada um — isso define o perfil das lembrancinhas."
+        desc="Meta de ~80 convidados. Escolha a faixa etária (Adulto, Criança ou Adolescente) e o gênero de cada um - isso define o perfil das lembrancinhas."
       />
 
       <div className="stats">
@@ -45,7 +45,7 @@ export function Convidados() {
 
       <div style={{ marginTop: 14 }}>
         <Note>
-          O <b>✓/✗</b> ao lado do nome é sua expectativa pessoal de comparecimento — clique para
+          O <b>✓/✗</b> ao lado do nome é sua expectativa pessoal de comparecimento - clique para
           marcar quem você acha que não vem, mesmo que ainda esteja pendente. Isso alimenta o
           card <b>Devem vir de fato</b> ali acima, sem depender do status oficial do convite.
           Escolha também a <b>faixa etária</b> e o <b>Gênero</b> de cada convidado; só adultos
@@ -59,7 +59,7 @@ export function Convidados() {
         </CardTitle>
         <p className="card-sub">
           Contagem entre todos os convidados que não recusaram (confirmados + pendentes),
-          separada por faixa e gênero — use para definir quantas de cada tipo de lembrancinha
+          separada por faixa e gênero - use para definir quantas de cada tipo de lembrancinha
           encomendar sem depender de todo mundo já ter confirmado.
         </p>
         <div className="stats">

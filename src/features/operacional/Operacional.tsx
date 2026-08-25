@@ -7,7 +7,7 @@ import type { CategoriaOperacional } from '../../types';
 
 const SUBTITULOS: Partial<Record<CategoriaOperacional, string>> = {
   comida:
-    'Cardápio da casa já definido — aqui você acompanha ajustes e extras (doces, bolo, sobremesa).',
+    'Cardápio da casa já definido - aqui você acompanha ajustes e extras (doces, bolo, sobremesa).',
   musica:
     'Som e a iluminação da golden hour: playlist do pôr do sol, luz quente e velas na transição para a noite.',
 };

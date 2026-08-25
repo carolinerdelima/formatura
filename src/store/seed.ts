@@ -8,7 +8,7 @@ const mk = (arr: string[]): ChecklistItem[] =>
 export function seed(): AppState {
   return {
     festa: {
-      titulo: 'Formatura — Ciência da Computação',
+      titulo: 'Formatura - Ciência da Computação',
       dataHora: '2026-08-29T18:00',
       local: 'Churrascaria Família Strapazzon',
       endereco: 'Rua VRS, 855 - São Marcos, Farroupilha/RS · 95180-000',
@@ -88,6 +88,6 @@ export const FLORES = [
   'Cosmos brancos e rosados',
   'Astilbe creme',
   'Cravos champagne',
-  'Pampas — só alguns!',
+  'Pampas - só alguns!',
   'Muito verde: eucalipto, oliveira, ruscus',
 ];

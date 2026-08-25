@@ -36,7 +36,7 @@ export function Gastos() {
       <ViewHead
         eyebrow="Gastos"
         title="💰 Controle de gastos"
-        desc="Consolidado automático de tudo que tem valor em todas as abas. Marque como pago aqui ou na aba de origem — é o mesmo dado."
+        desc="Consolidado automático de tudo que tem valor em todas as abas. Marque como pago aqui ou na aba de origem - é o mesmo dado."
       />
 
       <div className="stats">

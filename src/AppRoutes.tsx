@@ -8,7 +8,7 @@ import { GuestPage } from './features/convite/GuestPage';
  * Roteamento de nível superior:
  * - `/login` e `/c/:slug` são públicos, sem sessão.
  * - Tudo o mais (Início, Comida, Convidados, Gastos…) fica atrás do `AuthGate`
- *   — a navegação interna entre essas abas continua sendo por estado
+ *   - a navegação interna entre essas abas continua sendo por estado
  *   (Zustand `tab`), não por URL; só a borda externa é protegida por rota.
  */
 export function AppRoutes() {

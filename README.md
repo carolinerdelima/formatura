@@ -1,7 +1,7 @@
-# Formatura da Carol — "Golden Hour at the Farm"
+# Formatura da Carol - "Janta de formatura"
 
 App local de organização da festa de formatura (Ciência da Computação, 29/08/2026,
-Churrascaria Família Strapazzon — Farroupilha/RS). Migrado do HTML single-file
+Churrascaria Família Strapazzon - Farroupilha/RS). Migrado do HTML single-file
 original para **Vite + React + TypeScript**, com hot reload e sem perder nenhuma
 funcionalidade nem a identidade visual.
 
@@ -77,12 +77,12 @@ src/
 - **Persistência atrás de um adapter.** `store/persistence.ts` expõe a interface
   `StorageAdapter` (`load` / `save` / `isPersistent`). Hoje a implementação é
   localStorage; para trocar por um backend, basta escrever outro adapter e mudar a
-  linha `const storage = …` em `useStore.ts` — nenhum componente conhece o storage.
+  linha `const storage = …` em `useStore.ts` - nenhum componente conhece o storage.
 - **`normalize()` migra dados antigos.** Na primeira execução o app lê a chave
   `festaFormatura_carol_v1` (do HTML original) se a nova ainda não existir, e
   converte o antigo campo `menor: boolean` para a `faixa` explícita
   (adulto/criança/adolescente). Nenhum dado se perde na migração.
-- **CSS global, não CSS-in-JS.** O CSS original é a fonte de verdade do visual —
+- **CSS global, não CSS-in-JS.** O CSS original é a fonte de verdade do visual -
   portá-lo literalmente (com os hex exatos em `tokens.css`) preserva o "clima"
   melhor do que reconstruí-lo. As classes seguem o mesmo vocabulário de antes
   (`.card`, `.stat`, `.pill-toggle`, `.hero`), então dá pra comparar lado a lado.
@@ -97,20 +97,20 @@ src/
 Tudo é salvo automaticamente no `localStorage` a cada alteração (a sidebar pisca
 "Salvo ✓"). Na sidebar também ficam:
 
-- **⬇️ Backup (.json)** — baixa o estado completo em `formatura-carol-backup-AAAA-MM-DD.json`.
-- **⬆️ Restaurar backup** — carrega um `.json` desses de volta (passa pelo mesmo
+- **⬇️ Backup (.json)** - baixa o estado completo em `formatura-carol-backup-AAAA-MM-DD.json`.
+- **⬆️ Restaurar backup** - carrega um `.json` desses de volta (passa pelo mesmo
   `normalize()`, então backups antigos continuam funcionando).
 
 Se o navegador bloquear o localStorage, o app segue funcionando só naquela sessão e
-avisa por um toast — vale fazer backup manual nesse caso.
+avisa por um toast - vale fazer backup manual nesse caso.
 
 ## Login (admin) + RSVP público (`/c/:slug`)
 
 O app tem duas portas de entrada bem separadas:
 
-- **Área administrativa** (Início, Comida, Convidados, Gastos…) — atrás de login
+- **Área administrativa** (Início, Comida, Convidados, Gastos…) - atrás de login
   (Supabase Auth, e-mail+senha). Sem sessão, qualquer rota redireciona pra `/login`.
-- **`/c/:slug`** — página pública e pessoal de RSVP, um link por convidado. Sem
+- **`/c/:slug`** - página pública e pessoal de RSVP, um link por convidado. Sem
   login, sem cadastro. Mostra só o nome da pessoa, data/local/mapa/agenda,
   confirmação de presença e, se faltar, os campos de faixa etária/gênero.
 
@@ -118,7 +118,7 @@ O app tem duas portas de entrada bem separadas:
 
 Antes, **todo** o estado do app (checklists, orçamento, convidados, tudo) morava
 dentro de um único blob JSON (`formatura_state.data`), sincronizado com a chave
-pública (`anon`) sem restrição — ou seja, qualquer pessoa com essa chave (que já
+pública (`anon`) sem restrição - ou seja, qualquer pessoa com essa chave (que já
 fica embutida no JS do site) lia e editava o app inteiro, sem senha.
 
 Pra dar a cada convidado um link que só mexe na própria linha dele, sem enxergar
@@ -127,8 +127,8 @@ era "o app inteiro", não "um convidado"). Então:
 
 - Os **convidados da festa** saíram do blob e viraram uma tabela relacional:
   `convidados` (`id`, `nome`, `grupo`, `faixa`, `idade`, `genero`, `bebe`,
-  `status`, `provavel`, `convite_enviado`, `obs`, **`slug`** — o token da URL
-  pública —, `created_at`, `updated_at`).
+  `status`, `provavel`, `convite_enviado`, `obs`, **`slug`** - o token da URL
+  pública -, `created_at`, `updated_at`).
 - A tabela `convidados` **e** a `formatura_state` (o blob) ganharam RLS: só a
   conta autenticada (você) acessa direto. O papel `anon` não tem nenhuma policy
   em nenhuma das duas.
@@ -137,18 +137,18 @@ era "o app inteiro", não "um convidado"). Então:
   - `rpc_get_convite(slug)` → devolve nome/status/faixa/genero só daquela linha.
   - `rpc_confirmar_presenca(slug, status, faixa?, genero?)` → grava só naquela linha.
 - A migração (`supabase/migration_convite_rsvp.sql`) já importa os convidados que
-  hoje estão dentro do blob pra essa tabela nova — **rode uma vez** no SQL Editor
+  hoje estão dentro do blob pra essa tabela nova - **rode uma vez** no SQL Editor
   do Supabase antes do primeiro deploy dessa versão.
-- **Colação** continua no blob como antes (`convidadosColacao`) — não ganhou link
+- **Colação** continua no blob como antes (`convidadosColacao`) - não ganhou link
   público nesta rodada; se quiser RSVP pra colação também, é o mesmo desenho,
   só falta replicar tabela + funções.
-- Data/local/PIX que aparecem na página do convidado **não vêm do banco** — ficam
+- Data/local/PIX que aparecem na página do convidado **não vêm do banco** - ficam
   fixos em `src/features/convite/conviteInfo.ts` (edite ali se mudar algo; é
   igual pra todo mundo, não precisa de uma consulta por convidado).
 
 ### Colocando a admin pra logar
 
-Não existe cadastro público — crie sua própria conta uma vez, direto no Supabase:
+Não existe cadastro público - crie sua própria conta uma vez, direto no Supabase:
 **Dashboard → Authentication → Users → Add user**, com seu e-mail e uma senha.
 Depois disso, `/login` já funciona.
 
@@ -159,12 +159,12 @@ Depois disso, `/login` já funciona.
 3. Confira em **Table Editor → convidados** se as linhas migraram com um `slug`
    preenchido em cada uma.
 
-É idempotente — pode rodar de novo sem duplicar dados ou dar erro.
+É idempotente - pode rodar de novo sem duplicar dados ou dar erro.
 
 ## Regressões visuais conhecidas do HTML original (já prevenidas aqui)
 
 1. `min-width: 0` explícito em `.main`, `.grid > *`, `.stat`, `.buyrow > *` e
-   `.guest-card > *` — sem isso o conteúdo estoura a viewport em vez de encolher.
+   `.guest-card > *` - sem isso o conteúdo estoura a viewport em vez de encolher.
 2. Rótulos de UI sempre com espaço ("Crianças / Adolescentes", nunca grudado), mais
    `overflow-wrap: anywhere` como rede de segurança em `.stat .l`, `.chip` e nos
    nomes das listas.

@@ -10,11 +10,11 @@ interface GuestRowProps {
   onToggleBebe: (id: string) => void;
   onToggleProvavel: (id: string) => void;
   onRemove: (id: string) => void;
-  /** Mostra o botão "Copiar link" (RSVP) — só a lista da festa tem link público. */
+  /** Mostra o botão "Copiar link" (RSVP) - só a lista da festa tem link público. */
   comLinkRsvp?: boolean;
 }
 
-/** Linha de convidado editável — compartilhada entre a festa e a colação. */
+/** Linha de convidado editável - compartilhada entre a festa e a colação. */
 export function GuestRow({
   g,
   onEdit,
@@ -34,7 +34,7 @@ export function GuestRow({
       <button
         type="button"
         className={`provavel-badge ${vem ? 'sim' : 'nao'}`}
-        title={vem ? 'Acho que vem — clique para marcar que acha que NÃO vem' : 'Acho que NÃO vem — clique para marcar que acha que vem'}
+        title={vem ? 'Acho que vem - clique para marcar que acha que NÃO vem' : 'Acho que NÃO vem - clique para marcar que acha que vem'}
         onClick={() => onToggleProvavel(g.id)}
       >
         {vem ? '✓' : '✗'}

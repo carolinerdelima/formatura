@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Formatura da Carol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Nunito+Sans:ital,wght@0,300..800;1,400..600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  :root{
+    --linho:#F7F3ED; --rosa-cha:#EBCFD1; --rosa-antigo:#C98E9A; --pessego:#E8B48D;
+    --terracota:#BF7356; --salvia:#A7B39B; --oliva:#6F7255; --cafe:#4A3428; --dourado:#A9864F;
+    --serif:'Fraunces',Georgia,serif; --sans:'Nunito Sans',system-ui,sans-serif; --mono:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--sans); color:var(--cafe);
+    width:210mm; height:297mm;
+    background:
+      radial-gradient(900px 500px at 88% -8%, rgba(232,180,141,.38), transparent 60%),
+      radial-gradient(700px 420px at -10% 105%, rgba(167,179,155,.30), transparent 60%),
+      linear-gradient(180deg,#FBF7F1 0%, #F5EEE4 100%);
+    display:flex; flex-direction:column; align-items:center;
+    padding:20mm 16mm 14mm;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* moldura fina */
+  body::before{
+    content:""; position:absolute; inset:8mm; border:1.5px solid rgba(74,52,40,.18);
+    border-radius:6px; pointer-events:none;
+  }
+
+  .kicker{
+    font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--terracota); margin-top:6mm;
+  }
+  h1{
+    font-family:var(--serif); font-weight:400; font-size:40px; margin:8px 0 0; text-align:center; color:var(--cafe);
+  }
+  h1 em{ font-style:italic; color:var(--terracota); }
+  .curso{
+    font-family:var(--sans); font-size:14px; color:var(--ink-soft,#6b5646); margin-top:6px;
+    display:flex; align-items:center; gap:8px; letter-spacing:.02em;
+  }
+
+  /* flor decorativa (placeholder ilustrado - trocar pela foto quando enviada) */
+  .flor{ width:210px; margin:14px 0 6px; opacity:.95; }
+
+  .data-box{
+    margin-top:10px; text-align:center;
+  }
+  .data-box .dia{
+    font-family:var(--serif); font-size:30px; color:var(--cafe);
+  }
+  .data-box .hora{
+    font-family:var(--mono); font-size:16px; color:var(--terracota); margin-top:2px; letter-spacing:.05em;
+  }
+
+  .local-box{
+    margin-top:18px; text-align:center; max-width:120mm;
+  }
+  .local-box .nome-local{
+    font-family:var(--serif); font-size:19px; color:var(--cafe);
+  }
+  .local-box .endereco{
+    font-family:var(--sans); font-size:13px; color:#6b5646; margin-top:4px; line-height:1.5;
+  }
+
+  .aviso{
+    margin-top:16px; max-width:130mm; text-align:center;
+    background:linear-gradient(180deg,#fbf3ea,#f7ede1); border:1px solid #ecdcc9; border-left:4px solid var(--dourado);
+    border-radius:12px; padding:12px 18px; font-size:13px; color:#6b5646;
+  }
+  .aviso b{ color:var(--cafe); }
+
+  /* botões-ícone clicáveis, estilo "toque aqui" */
+  .acoes{ display:flex; gap:16mm; margin-top:22px; }
+  .acao{
+    display:flex; flex-direction:column; align-items:center; text-decoration:none; width:34mm;
+  }
+  .acao .badge{
+    width:22mm; height:22mm; border-radius:999px;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--pessego) 45%, var(--terracota) 100%);
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    box-shadow:0 10px 22px -10px rgba(191,115,86,.55), inset 0 0 0 3px rgba(255,255,255,.55);
+    border:1px solid rgba(74,52,40,.12);
+  }
+  .acao .label{
+    margin-top:8px; font-family:var(--sans); font-weight:800; font-size:11px; text-align:center;
+    color:var(--cafe); text-transform:uppercase; letter-spacing:.03em; line-height:1.3;
+  }
+  .acao .sub{
+    font-family:var(--sans); font-weight:600; font-size:9.5px; color:var(--terracota); margin-top:1px;
+  }
+
+  /* motivo Ciência da Computação, discreto */
+  .cc-strip{
+    display:flex; align-items:center; gap:10px; margin-top:24px; opacity:.75;
+  }
+  .cc-strip span{ font-size:15px; }
+  .cc-strip .bin{ font-family:var(--mono); font-size:10px; letter-spacing:.15em; color:var(--salvia); }
+
+  .rodape{
+    margin-top:auto; padding-top:16px; text-align:center;
+  }
+  .rodape .assinatura{
+    font-family:var(--serif); font-style:italic; font-size:15px; color:var(--rosa-antigo);
+  }
+  .rodape .golden{
+    font-family:var(--mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:#a08a78; margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="kicker">Você está convidado(a)</div>
+  <h1>Formatura da <em>Carol</em></h1>
+  <div class="curso">🎓 Ciência da Computação</div>
+
+  <!-- flor decorativa (SVG ilustrado, paleta da festa - trocar por foto quando enviada) -->
+  <svg class="flor" viewBox="0 0 220 110" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.9">
+      <path d="M40 90 Q60 60 55 30 Q75 45 90 25" stroke="#A7B39B" stroke-width="2" fill="none"/>
+      <ellipse cx="55" cy="30" rx="14" ry="20" fill="#EBCFD1" transform="rotate(-20 55 30)"/>
+      <ellipse cx="70" cy="22" rx="12" ry="17" fill="#E8B48D" transform="rotate(10 70 22)"/>
+      <ellipse cx="42" cy="20" rx="11" ry="16" fill="#C98E9A" transform="rotate(-45 42 20)"/>
+      <circle cx="56" cy="26" r="6" fill="#A9864F" opacity="0.5"/>
+    </g>
+    <g opacity="0.9" transform="translate(150,10) scale(0.9)">
+      <path d="M0 80 Q15 55 12 25 Q30 38 42 18" stroke="#A7B39B" stroke-width="2" fill="none"/>
+      <ellipse cx="12" cy="25" rx="12" ry="17" fill="#E8B48D" transform="rotate(-15 12 25)"/>
+      <ellipse cx="26" cy="16" rx="10" ry="15" fill="#EBCFD1" transform="rotate(15 26 16)"/>
+      <circle cx="14" cy="21" r="5" fill="#A9864F" opacity="0.5"/>
+    </g>
+  </svg>
+
+  <div class="data-box">
+    <div class="dia">05 de setembro de 2026</div>
+    <div class="hora">A PARTIR DAS 19H</div>
+  </div>
+
+  <div class="local-box">
+    <div class="nome-local">Churrascaria Família Strapazzon</div>
+    <div class="endereco">Rua VRS, 855 - São Marcos, Farroupilha/RS · 95180-000</div>
+  </div>
+
+  <div class="aviso">
+    🥂 O <b>jantar</b> e as <b>bebidas</b> (refrigerantes, água e chopp) são <b>por conta da formanda</b> -
+    é só chegar e aproveitar!
+  </div>
+
+  <div class="acoes">
+    <a class="acao" href="https://www.google.com/maps/search/?api=1&query=Churrascaria%20Fam%C3%ADlia%20Strapazzon%2C%20Rua%20VRS%2C%20855%20%E2%80%94%20S%C3%A3o%20Marcos%2C%20Farroupilha/RS%20%C2%B7%2095180-000">
+      <span class="badge">📍</span>
+      <span class="label">Toque aqui</span>
+      <span class="sub">Ver endereço</span>
+    </a>
+    <a class="acao" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Formatura%20da%20Carol&dates=20260905T190000%2F20260906T000000&location=Churrascaria%20Fam%C3%ADlia%20Strapazzon%2C%20Rua%20VRS%2C%20855%20%E2%80%94%20S%C3%A3o%20Marcos%2C%20Farroupilha%2FRS%20%C2%B7%2095180-000&details=Jantar%20e%20comemora%C3%A7%C3%A3o%20da%20formatura%20da%20Carol%20em%20Ci%C3%AAncia%20da%20Computa%C3%A7%C3%A3o%20%E2%9C%A8">
+      <span class="badge">🗓️</span>
+      <span class="label">Toque aqui</span>
+      <span class="sub">Adicionar à agenda</span>
+    </a>
+  </div>
+
+  <div class="cc-strip">
+    <span>💻</span><span class="bin">01000011 01000011</span><span>⌨️</span>
+  </div>
+
+  <div class="rodape">
+    <div class="assinatura">Com carinho, Carol</div>
+  </div>
+
+</body>
+</html>

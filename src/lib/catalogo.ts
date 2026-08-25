@@ -48,7 +48,7 @@ export const TABS: TabMeta[] = [
   { id: 'gastos', label: 'Gastos', ic: '💰' },
 ];
 
-/** Paleta oficial "Golden Hour at the Farm". */
+/** Paleta oficial "Janta de formatura". */
 export const PALETA: ReadonlyArray<readonly [string, string]> = [
   ['Linho', '#F7F3ED'],
   ['Rosa Chá', '#EBCFD1'],

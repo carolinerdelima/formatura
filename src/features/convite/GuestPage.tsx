@@ -16,7 +16,7 @@ import { buscarConvite, enviarRsvp, type ConviteData } from './rsvp';
 
 type Fase = 'carregando' | 'nao-encontrado' | 'form' | 'obrigado';
 
-/** Página pública e pessoal de RSVP — `/c/:slug`. Sem login, sem cadastro. */
+/** Página pública e pessoal de RSVP - `/c/:slug`. Sem login, sem cadastro. */
 export function GuestPage() {
   const { slug = '' } = useParams<{ slug: string }>();
   const [fase, setFase] = useState<Fase>('carregando');
@@ -137,7 +137,7 @@ function FormularioConvite({
       onEnviado(status);
       onFaseObrigado();
     } else {
-      toast('Não deu pra enviar agora — tenta de novo em instantes.');
+      toast('Não deu pra enviar agora - tenta de novo em instantes.');
     }
   };
 
@@ -236,7 +236,7 @@ function FormularioConvite({
 }
 
 /** Bloco entre a descrição do evento e a confirmação: sugestões de presente / chave PIX,
- *  cada um revelado só ao clicar — não empurra a tela de confirmação pra baixo à toa. */
+ *  cada um revelado só ao clicar - não empurra a tela de confirmação pra baixo à toa. */
 function SecaoPresente() {
   const { pix } = CONVITE_INFO;
   const [verSugestoes, setVerSugestoes] = useState(false);
@@ -268,7 +268,7 @@ function SecaoPresente() {
             <div style={{ marginTop: 18 }}>
               <h4 style={{ fontSize: 14, margin: '0 0 4px' }}>💭 Exemplos do gosto da Carol</h4>
               <p style={{ fontSize: 12, color: 'var(--ink-soft)', margin: '0 0 10px' }}>
-                São só referências pra pegar a ideia — não precisa ser exatamente isso.
+                São só referências pra pegar a ideia - não precisa ser exatamente isso.
               </p>
               {categorias.map((cat) => {
                 const itens = SUGESTOES_PRESENTE.filter((s) => s.categoria === cat);

@@ -35,14 +35,14 @@ export function Inicio() {
 
       <div className="hero">
         <div className="sundial" />
-        <div className="kicker">Golden Hour at the Farm</div>
+        <div className="kicker">Janta de formatura</div>
         <h2>
           Formatura da <em>Carol</em>
         </h2>
         <div className="where">
           📍 {festa.local} · {festa.endereco}
           <br />
-          🗓️ 29 de agosto de 2026, 18h — pôr do sol na fazenda
+          🗓️ 29 de agosto de 2026, 18h - pôr do sol na fazenda
         </div>
         <div className="count">
           {unit(c.dias, 'Dias')}
@@ -56,7 +56,7 @@ export function Inicio() {
         <div style={{ marginTop: 18 }}>
           <Note>
             🍺 <b>Pendência aberta:</b> definir quantos litros de chopp liberar. Ajuste na aba{' '}
-            <b>Bebida</b> — calcule sobre ~{gm.consumidores || 80} pessoas que podem beber. Regra de
+            <b>Bebida</b> - calcule sobre ~{gm.consumidores || 80} pessoas que podem beber. Regra de
             bolso: entre 1,2 e 2 L por consumidor de álcool.
           </Note>
         </div>
@@ -77,7 +77,7 @@ export function Inicio() {
       <Card style={{ marginTop: 18 }}>
         <CardTitle ic="🎨">Paleta oficial</CardTitle>
         <p className="card-sub">
-          Rustic Chic · Boho · Country Elegante — a luz dourada como fio condutor.
+          Rustic Chic · Boho · Country Elegante - a luz dourada como fio condutor.
         </p>
         <div className="swatches">
           {PALETA.map(([nome, hex]) => (
@@ -121,7 +121,7 @@ export function Inicio() {
 
         <Card>
           <CardTitle ic="✨">O conceito</CardTitle>
-          <p className="card-sub">"Golden Hour at the Farm"</p>
+          <p className="card-sub">"Janta de formatura"</p>
           <p style={{ fontSize: 14, color: 'var(--ink-soft)', margin: 0 }}>
             A festa começa às 18h, na luz dourada. Fotos ao ar livre na hora mágica, depois todos
             entram para o jantar e a iluminação vira velas e luz quente. O vestido rosa antigo muda

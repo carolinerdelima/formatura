@@ -40,7 +40,7 @@ export default function App() {
   useEffect(() => {
     if (!isPersistent()) {
       const t = window.setTimeout(
-        () => toast('Sem localStorage disponível — os dados ficam só nesta sessão'),
+        () => toast('Sem localStorage disponível - os dados ficam só nesta sessão'),
         600,
       );
       return () => window.clearTimeout(t);

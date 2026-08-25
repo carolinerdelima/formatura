@@ -76,7 +76,7 @@ export function Sidebar() {
   return (
     <aside className="side">
       <div className="brand">
-        <div className="kicker">Golden Hour at the Farm</div>
+        <div className="kicker">Janta de formatura</div>
         <h1>
           Formatura da <em>Carol</em>
         </h1>

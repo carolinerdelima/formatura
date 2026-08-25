@@ -3,13 +3,13 @@
 -- ============================================================
 -- Contexto: hoje TODO o estado do app (incluindo a lista de convidados)
 -- mora dentro de UM blob JSON na tabela `formatura_state` (linha id='main'),
--- lido/escrito pela chave `anon` sem nenhuma restrição — ou seja, qualquer
+-- lido/escrito pela chave `anon` sem nenhuma restrição - ou seja, qualquer
 -- pessoa com a chave pública (que já está no JS do site) lê e edita tudo.
 --
 -- Este script:
 --   1. Cria uma tabela relacional `convidados` (uma linha por convidado).
 --   2. Migra os convidados que já existem dentro do blob para essa tabela.
---   3. Tranca a tabela `convidados` E a `formatura_state` com RLS — só a
+--   3. Tranca a tabela `convidados` E a `formatura_state` com RLS - só a
 --      sua conta autenticada (admin) tem acesso direto a qualquer uma.
 --   4. Cria duas funções RPC (SECURITY DEFINER) que são a ÚNICA porta de
 --      entrada pública: leem/gravam só a linha do convidado pelo slug,
@@ -21,7 +21,7 @@
 -- ============================================================
 
 -- ------------------------------------------------------------
--- 1. Tabela `convidados` (festa) — uma linha por convidado
+-- 1. Tabela `convidados` (festa) - uma linha por convidado
 -- ------------------------------------------------------------
 create table if not exists public.convidados (
   id               text primary key,
@@ -38,7 +38,7 @@ create table if not exists public.convidados (
   provavel         boolean not null default true,
   convite_enviado  boolean not null default false,
   obs              text not null default '',
-  -- token curto e único usado na URL pública /c/:slug — nunca o id interno
+  -- token curto e único usado na URL pública /c/:slug - nunca o id interno
   slug             text not null unique
                      default substr(md5(random()::text || clock_timestamp()::text), 1, 10),
   created_at       timestamptz not null default now(),
@@ -92,7 +92,7 @@ where fs.id = 'main'
 on conflict (id) do nothing;
 
 -- ------------------------------------------------------------
--- 3. RLS — trava as duas tabelas. Ninguém não-autenticado acessa direto.
+-- 3. RLS - trava as duas tabelas. Ninguém não-autenticado acessa direto.
 -- ------------------------------------------------------------
 
 -- 3a. remove qualquer policy antiga (de qualquer nome) que hoje libere acesso,
@@ -126,11 +126,11 @@ for all
 using (auth.role() = 'authenticated')
 with check (auth.role() = 'authenticated');
 
--- Nenhuma policy para `anon` em nenhuma das duas tabelas — acesso direto
+-- Nenhuma policy para `anon` em nenhuma das duas tabelas - acesso direto
 -- fica bloqueado por padrão. O convidado só entra pelas funções abaixo.
 
 -- ------------------------------------------------------------
--- 4. Função pública de leitura — só os campos necessários da página do convidado
+-- 4. Função pública de leitura - só os campos necessários da página do convidado
 -- ------------------------------------------------------------
 create or replace function public.rpc_get_convite(p_slug text)
 returns table (
@@ -155,7 +155,7 @@ revoke all on function public.rpc_get_convite(text) from public;
 grant execute on function public.rpc_get_convite(text) to anon, authenticated;
 
 -- ------------------------------------------------------------
--- 5. Função pública de confirmação — grava só a própria linha, pelo slug
+-- 5. Função pública de confirmação - grava só a própria linha, pelo slug
 -- ------------------------------------------------------------
 create or replace function public.rpc_confirmar_presenca(
   p_slug text,
@@ -198,7 +198,7 @@ revoke all on function public.rpc_confirmar_presenca(text, text, text, text) fro
 grant execute on function public.rpc_confirmar_presenca(text, text, text, text) to anon, authenticated;
 
 -- ------------------------------------------------------------
--- 6. Realtime — permite que a área admin veja RSVPs chegando ao vivo,
+-- 6. Realtime - permite que a área admin veja RSVPs chegando ao vivo,
 --    sem precisar recarregar a página.
 -- ------------------------------------------------------------
 do $$

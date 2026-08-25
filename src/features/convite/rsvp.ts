@@ -10,7 +10,7 @@ export interface ConviteData {
 
 /**
  * Busca os dados públicos de um convidado pelo slug, via a função RPC
- * `rpc_get_convite` — nunca toca a tabela `convidados` diretamente.
+ * `rpc_get_convite` - nunca toca a tabela `convidados` diretamente.
  * @returns `null` se o slug não existir, o Supabase não estiver configurado,
  * ou a requisição falhar.
  */
@@ -33,7 +33,7 @@ export async function buscarConvite(slug: string): Promise<ConviteData | null> {
 
 /**
  * Confirma ou recusa presença (e opcionalmente preenche faixa/gênero), via a
- * função RPC `rpc_confirmar_presenca` — grava só a própria linha do convidado.
+ * função RPC `rpc_confirmar_presenca` - grava só a própria linha do convidado.
  * @returns `true` se a gravação deu certo.
  */
 export async function enviarRsvp(

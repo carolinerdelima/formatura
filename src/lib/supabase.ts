@@ -12,6 +12,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /** Client único do Supabase. `null` quando as env vars não estão configuradas
- *  (ex.: rodando local sem `.env`) — nesse caso o app cai para localStorage puro. */
+ *  (ex.: rodando local sem `.env`) - nesse caso o app cai para localStorage puro. */
 export const supabase =
     supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;

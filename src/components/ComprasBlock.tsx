@@ -6,7 +6,7 @@ import { BuyRow } from './BuyRow';
 import { InlineAdd } from './InlineAdd';
 import { Card, CardTitle, Chip } from './ui';
 
-/** Bloco "coisas a comprar" — tudo com valor alimenta a aba Gastos. */
+/** Bloco "coisas a comprar" - tudo com valor alimenta a aba Gastos. */
 export function ComprasBlock({ cat }: { cat: Categoria }) {
   const compras = useStore((s) => s.compras);
   const add = useStore((s) => s.addCompra);

@@ -6,7 +6,7 @@ import { guestMetrics } from '../../store/selectors';
 import { useStore } from '../../store/useStore';
 
 /**
- * Convidados da colação de grau — evento separado da festa, em outro dia.
+ * Convidados da colação de grau - evento separado da festa, em outro dia.
  * Lista própria (`convidadosColacao`), independente da lista da festa.
  */
 export function Colacao() {
@@ -35,7 +35,7 @@ export function Colacao() {
       <ViewHead
         eyebrow="Colação de Grau"
         title="🎓 Convidados da colação"
-        desc="Lista separada da festa — a colação é em outro dia. Escolha a faixa etária (Adulto, Criança ou Adolescente) e o gênero de cada um."
+        desc="Lista separada da festa - a colação é em outro dia. Escolha a faixa etária (Adulto, Criança ou Adolescente) e o gênero de cada um."
       />
 
       <div className="stats">
@@ -48,10 +48,10 @@ export function Colacao() {
 
       <div style={{ marginTop: 14 }}>
         <Note>
-          O <b>✓/✗</b> ao lado do nome é sua expectativa pessoal de comparecimento — clique para
+          O <b>✓/✗</b> ao lado do nome é sua expectativa pessoal de comparecimento - clique para
           marcar quem você acha que não vem, mesmo que ainda esteja pendente. Isso alimenta o card{' '}
           <b>Devem vir de fato</b> ali acima. Esta lista é independente da aba{' '}
-          <b>Convidados</b> da festa — pode ter pessoas repetidas ou totalmente diferentes, cada
+          <b>Convidados</b> da festa - pode ter pessoas repetidas ou totalmente diferentes, cada
           evento com sua própria lista.
         </Note>
       </div>

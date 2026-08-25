@@ -1,5 +1,5 @@
 /* ============================================================
-   Modelo de dados — Formatura da Carol
+   Modelo de dados - Formatura da Carol
    ============================================================ */
 
 /** Categorias operacionais: têm checklist + lista de compras. */
@@ -54,11 +54,11 @@ export interface Convidado {
   /** Só relevante quando `faixa === 'adulto'`. */
   bebe: boolean;
   status: StatusConvidado;
-  /** Sua expectativa pessoal de comparecimento — independente do `status` oficial. */
+  /** Sua expectativa pessoal de comparecimento - independente do `status` oficial. */
   provavel: boolean;
   conviteEnviado: boolean;
   obs: string;
-  /** Token curto e único da URL pública `/c/:slug` — só a festa (não a colação) tem link de RSVP. */
+  /** Token curto e único da URL pública `/c/:slug` - só a festa (não a colação) tem link de RSVP. */
   slug?: string;
 }
 
@@ -118,7 +118,7 @@ export interface AppState {
   compras: ItemCompra[];
   /** Convidados da festa de formatura. */
   convidados: Convidado[];
-  /** Convidados da colação de grau — evento separado, em outro dia. */
+  /** Convidados da colação de grau - evento separado, em outro dia. */
   convidadosColacao: Convidado[];
   tab: TabId;
 }
@@ -130,21 +130,21 @@ export interface GuestMetrics {
   recusados: number;
   pendentes: number;
   enviados: number;
-  /** Convidados + pendentes que não recusaram — base do planejamento (lembrancinhas, etc). */
+  /** Convidados + pendentes que não recusaram - base do planejamento (lembrancinhas, etc). */
   considerados: number;
-  /** Não recusaram e você marcou como prováveis — sua estimativa real de quem vem. */
+  /** Não recusaram e você marcou como prováveis - sua estimativa real de quem vem. */
   provaveis: number;
-  /** Adultos não recusados que bebem — atualiza ao vivo, mesmo antes de confirmar. */
+  /** Adultos não recusados que bebem - atualiza ao vivo, mesmo antes de confirmar. */
   bebedoresConsiderados: number;
   /** Crianças + adolescentes entre os considerados (não recusados). */
   menores: number;
-  /** Entre os considerados (não recusados) — para planejar lembrancinhas. */
+  /** Entre os considerados (não recusados) - para planejar lembrancinhas. */
   criancas: number;
   adolescentes: number;
   homens: number;
   mulheres: number;
   semGenero: number;
-  /** Só entre confirmados — usado no cálculo do chopp. */
+  /** Só entre confirmados - usado no cálculo do chopp. */
   menoresConfirmados: number;
   bebedores: number;
   naoBebem: number;

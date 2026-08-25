@@ -91,7 +91,7 @@ export function Bebida() {
   );
 }
 
-/** Card interativo "Quem bebe" — só adultos não-recusados aparecem. */
+/** Card interativo "Quem bebe" - só adultos não-recusados aparecem. */
 function QuemBebeCard() {
   const convidados = useStore((s) => s.convidados);
   const toggleBebe = useStore((s) => s.toggleBebe);
@@ -120,7 +120,7 @@ function QuemBebeCard() {
         Quem bebe
       </CardTitle>
       <p className="card-sub">
-        Todos começam como "Bebe". Marque as exceções que você já conhece — menores nem aparecem
+        Todos começam como "Bebe". Marque as exceções que você já conhece - menores nem aparecem
         aqui.
       </p>
 

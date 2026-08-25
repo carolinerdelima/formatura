@@ -24,7 +24,7 @@ import type {
   TabId,
 } from '../types';
 
-/** Adapter de persistência em uso — trocar aqui para plugar um backend. */
+/** Adapter de persistência em uso - trocar aqui para plugar um backend. */
 const storage: StorageAdapter = localStorageAdapter;
 
 /** Convidado novo com os valores padrão (usado tanto pela festa quanto pela colação). */
@@ -77,7 +77,7 @@ interface Actions {
   ) => void;
   removeInspiracao: (cat: CategoriaInspiracao, id: string) => void;
 
-  // convidados da festa — fonte da verdade é a tabela `convidados` no Supabase
+  // convidados da festa - fonte da verdade é a tabela `convidados` no Supabase
   // (quando configurado); estas actions atualizam local + agendam a gravação remota.
   addConvidado: (nome: string, grupo: string) => void;
   editConvidado: <K extends keyof Convidado>(id: string, campo: K, valor: Convidado[K]) => void;
@@ -85,7 +85,7 @@ interface Actions {
   toggleBebe: (id: string) => void;
   toggleProvavel: (id: string) => void;
   removeConvidado: (id: string) => void;
-  /** Substitui a lista inteira — usado pelo fetch inicial e pelo realtime. */
+  /** Substitui a lista inteira - usado pelo fetch inicial e pelo realtime. */
   setConvidados: (list: Convidado[]) => void;
 
   // convidados da colação de grau (lista independente)
@@ -104,7 +104,7 @@ interface Actions {
   replaceState: (raw: unknown) => void;
   reset: () => void;
   /** Aplica um blob vindo do Supabase SEM tocar em `convidados` (fonte própria)
-   *  e SEM reagendar um envio de volta — só usado pelo pull inicial. */
+   *  e SEM reagendar um envio de volta - só usado pelo pull inicial. */
   applyRemoteBlob: (patch: Omit<AppState, 'convidados'>) => void;
 }
 
@@ -214,7 +214,7 @@ export const useStore = create<Store>()((set) => {
         void insertConvidado(g).then((ok) => {
           usePendingConvidadosStore.getState().desmarcar(g.id);
           if (!ok) {
-            // não salvou: o slug local é mentiroso (o link não existe de verdade) —
+            // não salvou: o slug local é mentiroso (o link não existe de verdade) -
             // some com ele localmente sem tentar um UPDATE numa linha que não existe.
             set((st) => ({
               convidados: st.convidados.map((x) =>
@@ -308,7 +308,7 @@ export const useStore = create<Store>()((set) => {
     reset: () => update(() => seed()),
     applyRemoteBlob: (patch) =>
       set((s) => {
-        // `convidados` nunca vem do blob — a fonte é a tabela própria, sincronizada
+        // `convidados` nunca vem do blob - a fonte é a tabela própria, sincronizada
         // à parte. Preservar o valor atual evita que o pull do blob zere a lista
         // (e, crucialmente, NÃO chama scheduleRemoteSave: um pull não deve virar push).
         const next: AppState = { ...patch, convidados: s.convidados };
@@ -322,7 +322,7 @@ export const useStore = create<Store>()((set) => {
 export const isPersistent = () => storage.isPersistent();
 
 /** Busca o estado mais recente do Supabase (se configurado) e aplica ao
- *  estado local — é o que faz o celular "puxar" o que foi editado no PC
+ *  estado local - é o que faz o celular "puxar" o que foi editado no PC
  *  (e vice-versa). Chamar uma vez, no bootstrap do app. Não mexe em
  *  `convidados`: essa lista sincroniza separado, via `initConvidadosSync`. */
 export function initRemoteSync(): void {
@@ -336,7 +336,7 @@ let unsubscribeConvidados: (() => void) | null = null;
 /**
  * Busca a lista de convidados da festa na tabela do Supabase e assina
  * mudanças em tempo real (inclusive RSVPs feitos pela página pública
- * `/c/:slug`). Chamar uma vez, só depois de confirmar sessão autenticada —
+ * `/c/:slug`). Chamar uma vez, só depois de confirmar sessão autenticada -
  * a tabela tem RLS e não retorna nada para um visitante anônimo.
  */
 export function initConvidadosSync(): void {
@@ -350,7 +350,7 @@ export function initConvidadosSync(): void {
   unsubscribeConvidados = subscribeConvidados(refresh);
 }
 
-/** Cancela a assinatura em tempo real — chamar ao encerrar a sessão (logout). */
+/** Cancela a assinatura em tempo real - chamar ao encerrar a sessão (logout). */
 export function stopConvidadosSync(): void {
   unsubscribeConvidados?.();
   unsubscribeConvidados = null;
