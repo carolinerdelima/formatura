@@ -101,13 +101,21 @@
   text-transform: capitalize;
 }
 
+.convite-saudacao {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--cv-pink-dark);
+  margin: 12px 0 0;
+}
+
 .convite-frase {
   font-family: var(--serif);
   font-size: 15.5px;
   color: var(--cv-gold);
   line-height: 1.5;
   max-width: 360px;
-  margin: 14px auto 0;
+  margin: 10px auto 0;
 }
 
 .convite-acoes {

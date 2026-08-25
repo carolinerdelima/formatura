@@ -131,7 +131,7 @@ function PaginaConvite({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Hero() {
+function Hero({ nome }: { nome?: string }) {
   const data = new Date(CONVITE_INFO.dataHora);
   const diaSemana = DIA_SEMANA.format(data);
   return (
@@ -149,6 +149,7 @@ function Hero() {
           às {horaCurta(CONVITE_INFO.dataHora)} horas
         </div>
       </div>
+      {nome ? <p className="convite-saudacao">Olá, {nome}!</p> : null}
       <p className="convite-frase">
         Com o coração cheio de gratidão, convido você a celebrar esse momento comigo, no{' '}
         {CONVITE_INFO.local}.
@@ -227,7 +228,7 @@ function FormularioConvite({
 
   return (
     <PaginaConvite>
-      <Hero />
+      <Hero nome={convite.nome} />
 
       {jaRespondeu && !mudarResposta ? (
         <div className="convite-card" style={{ textAlign: 'center' }}>
@@ -378,7 +379,7 @@ function GrupoPagina({
 
   return (
     <PaginaConvite>
-      <Hero />
+      <Hero nome={grupo.familiaNome} />
       <div className="convite-card">
         <h3>
           Quem vem?{' '}
