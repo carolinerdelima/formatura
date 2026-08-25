@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FormaturaDaCarol//PT-BR
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:formatura-carol-2026@formaturadacarol
+DTSTAMP:20260824T120000Z
+DTSTART:20260905T220000Z
+DTEND:20260906T020000Z
+SUMMARY:Formatura da Carol
+DESCRIPTION:Com o coração cheio\, convido você a celebrar comigo\, no Restaurante Família Strapazzon. Comida\, refrigerantes\, águas e chopp por conta da formanda.
+LOCATION:Restaurante Família Strapazzon
+END:VEVENT
+END:VCALENDAR
