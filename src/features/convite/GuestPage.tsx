@@ -387,7 +387,7 @@ function GrupoPagina({
             {confirmados}/{grupo.membros.length}
           </span>
         </h3>
-        <p className="sub">Cada pessoa confirma por conta própria — pode mudar quando quiser.</p>
+        <p className="sub">Cada pessoa confirma por conta própria. Você pode mudar quando quiser.</p>
         <div>
           {grupo.membros.map((m) => (
             <div className="convite-membro" key={m.slug}>
